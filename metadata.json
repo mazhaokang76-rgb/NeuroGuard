@@ -1,0 +1,8 @@
+{
+  "name": "NeuroGuard: PSCI Evaluation System",
+  "description": "A comprehensive, AI-powered self-assessment tool for Post-Stroke Cognitive Impairment, integrating MMSE, MoCA, and ADL scales with multimodal analysis.",
+  "requestFramePermissions": [
+    "microphone",
+    "camera"
+  ]
+}
