@@ -1,7 +1,7 @@
 import { GoogleGenAI, Type } from "@google/genai";
 
-const apiKey = process.env.API_KEY || '';
-const ai = new GoogleGenAI({ apiKey });
+// 从环境变量获取 API Key
+const apiKey = import.meta.env.VITE_GEMINI_API_KEY || '';
 
 // Helper to convert Blob to Base64
 export const blobToBase64 = (blob: Blob): Promise<string> => {
@@ -17,7 +17,7 @@ export const blobToBase64 = (blob: Blob): Promise<string> => {
   });
 };
 
-interface EvaluationResult {
+export interface EvaluationResult {
   score: number;
   reasoning: string;
 }
@@ -30,21 +30,23 @@ export const evaluateResponse = async (
 ): Promise<EvaluationResult> => {
   if (!apiKey) {
     console.warn("No API Key provided. Returning mock score.");
-    return { score: 1, reasoning: "API Key missing. Mock pass." };
+    return { score: 1, reasoning: "API Key 缺失，使用模拟评分。" };
   }
 
   try {
+    // 正确初始化 GoogleGenAI
+    const ai = new GoogleGenAI({ apiKey });
     const model = 'gemini-2.5-flash';
     const parts: any[] = [];
 
-    // System instruction implicitly via prompt for this simpler implementation
+    // 构建完整提示词
     let fullPrompt = `
       You are a strict medical assistant grading a cognitive assessment test.
       Task: ${prompt}
       
       Output JSON format only:
       {
-        "score": number,
+        "score": number (0 or 1),
         "reasoning": "short explanation in Chinese"
       }
     `;
@@ -55,6 +57,7 @@ export const evaluateResponse = async (
 
     parts.push({ text: fullPrompt });
 
+    // 添加图片数据
     if (imageBlob) {
       const base64Data = await blobToBase64(imageBlob);
       parts.push({
@@ -65,24 +68,24 @@ export const evaluateResponse = async (
       });
     }
 
+    // 添加音频数据
     if (audioBlob) {
       const base64Data = await blobToBase64(audioBlob);
-      // Gemini Flash handles audio in the 'inlineData' as well usually, 
-      // but specific mime types are important.
       parts.push({
         inlineData: {
-          mimeType: audioBlob.type.includes('wav') ? 'audio/wav' : 'audio/mp3',
+          mimeType: audioBlob.type.includes('wav') ? 'audio/wav' : 'audio/webm',
           data: base64Data
         }
       });
     }
 
+    // 调用 Gemini API
     const response = await ai.models.generateContent({
       model: model,
-      contents: {
+      contents: [{
         role: 'user',
         parts: parts
-      },
+      }],
       config: {
         responseMimeType: 'application/json',
         responseSchema: {
@@ -90,18 +93,25 @@ export const evaluateResponse = async (
           properties: {
             score: { type: Type.NUMBER },
             reasoning: { type: Type.STRING }
-          }
+          },
+          required: ['score', 'reasoning']
         }
       }
     });
 
     const resultText = response.text;
-    if (!resultText) throw new Error("No response from AI");
+    if (!resultText) {
+      throw new Error("No response from AI");
+    }
 
-    return JSON.parse(resultText) as EvaluationResult;
+    const result = JSON.parse(resultText) as EvaluationResult;
+    return result;
 
   } catch (error) {
     console.error("Gemini Evaluation Error:", error);
-    return { score: 0, reasoning: "AI evaluation failed. Please check connection or API key." };
+    return { 
+      score: 0, 
+      reasoning: "AI 评估失败。请检查网络连接或 API 密钥。" 
+    };
   }
 };
