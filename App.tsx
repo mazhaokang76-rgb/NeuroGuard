@@ -126,7 +126,7 @@ const App: React.FC = () => {
               </div>
               <h2 className="text-2xl font-bold leading-relaxed">{currentQuestion.text}</h2>
               {currentQuestion.subText && (
-                <p className="mt-2 opacity-90 text-sm bg-white/10 p-2 rounded">{currentQuestion.subText}</p>
+                <p className="mt-2 opacity-90 text-sm bg-white bg-opacity-10 p-2 rounded">{currentQuestion.subText}</p>
               )}
             </div>
 
@@ -146,24 +146,25 @@ const App: React.FC = () => {
               ) : (
                 <div className="w-full">
                   {currentQuestion.inputType === QuestionInputType.TEXT && (
-                    <div className="flex gap-2" onKeyDown
-                      <div className="flex gap-2" onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        const input = e.currentTarget.querySelector('input') as HTMLInputElement;
-                        if (input?.value) {
-                          processAnswer(input.value, QuestionInputType.TEXT);
-                          input.value = '';
-                        }
-                      }
-                    }}>
+                    <div className="flex gap-2">
                       <input 
+                        id="text-answer"
                         autoFocus 
                         placeholder="请输入您的回答..." 
                         className="flex-grow p-4 border border-gray-300 rounded-lg text-lg focus:ring-2 focus:ring-teal-700 focus:outline-none"
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            const input = e.currentTarget as HTMLInputElement;
+                            if (input.value) {
+                              processAnswer(input.value, QuestionInputType.TEXT);
+                              input.value = '';
+                            }
+                          }
+                        }}
                       />
                       <button 
-                        onClick={(e) => {
-                          const input = e.currentTarget.previousElementSibling as HTMLInputElement;
+                        onClick={() => {
+                          const input = document.getElementById('text-answer') as HTMLInputElement;
                           if (input?.value) {
                             processAnswer(input.value, QuestionInputType.TEXT);
                             input.value = '';
