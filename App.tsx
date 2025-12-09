@@ -34,11 +34,9 @@ const App: React.FC = () => {
     if (currentQuestion.assessmentType === AssessmentType.ADL) {
        // Answer is string "1. ...", "2. ..."
        // We parse the first char number. 
-       // Logic: Usually for ADL scale 1=independent. 
-       // We store the number as score for tracking, but report logic handles total.
        const val = parseInt(answer.charAt(0));
        score = isNaN(val) ? 1 : val; 
-       feedback = "Self-reported.";
+       feedback = "自我报告。";
     } 
     // AI Evaluation for others
     else if (currentQuestion.geminiPrompt) {
@@ -51,9 +49,10 @@ const App: React.FC = () => {
       score = evaluation.score;
       feedback = evaluation.reasoning;
     } 
-    // Fallback manual logic if no prompt (simple text match)
+    // Fallback manual logic if no prompt
     else {
       score = 1; // Default pass for demo
+      feedback = "默认通过。";
     }
 
     setState(prev => ({
@@ -83,7 +82,7 @@ const App: React.FC = () => {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
         <div className="w-full">
            <div className="text-center mb-10">
-             <h1 className="text-4xl font-extrabold text-primary tracking-tight">NeuroGuard</h1>
+             <h1 className="text-4xl font-extrabold text-teal-700 tracking-tight">NeuroGuard</h1>
              <p className="text-gray-500 mt-2">Post-Stroke Cognitive Impairment Self-Assessment</p>
            </div>
            <PatientForm onComplete={handlePatientSubmit} />
@@ -99,11 +98,11 @@ const App: React.FC = () => {
   const progress = ((state.currentStep) / QUESTIONS.length) * 100;
 
   return (
-    <div className="min-h-screen bg-surface flex flex-col">
+    <div className="min-h-screen bg-gray-100 flex flex-col">
       {/* Header */}
       <header className="bg-white shadow-sm p-4 sticky top-0 z-10">
         <div className="max-w-4xl mx-auto flex justify-between items-center">
-           <span className="font-bold text-primary text-xl">NeuroGuard Evaluation</span>
+           <span className="font-bold text-teal-700 text-xl">NeuroGuard Evaluation</span>
            <div className="flex items-center gap-4 text-sm text-gray-500">
              <span>{patient.name}</span>
              <span className="bg-gray-200 px-2 py-1 rounded">{currentQuestion.assessmentType}</span>
@@ -123,7 +122,7 @@ const App: React.FC = () => {
             </div>
             <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
               <div 
-                className="h-full bg-accent transition-all duration-500 ease-out" 
+                className="h-full bg-amber-500 transition-all duration-500 ease-out" 
                 style={{ width: `${progress}%` }}
               />
             </div>
@@ -131,7 +130,7 @@ const App: React.FC = () => {
 
           {/* Question Card */}
           <div className="bg-white rounded-2xl shadow-xl overflow-hidden min-h-[400px] flex flex-col">
-            <div className="bg-primary p-6 text-white">
+            <div className="bg-teal-700 p-6 text-white">
               <div className="uppercase tracking-wide text-xs font-bold opacity-80 mb-2">
                 {currentQuestion.category}
               </div>
@@ -151,7 +150,7 @@ const App: React.FC = () => {
 
               {state.isProcessing ? (
                  <div className="text-center py-10">
-                   <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+                   <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-700 mx-auto mb-4"></div>
                    <p className="text-gray-600 animate-pulse">AI is analyzing your response...</p>
                  </div>
               ) : (
@@ -166,9 +165,9 @@ const App: React.FC = () => {
                         name="answer" 
                         autoFocus 
                         placeholder="请输入您的回答..." 
-                        className="flex-grow p-4 border border-gray-300 rounded-lg text-lg focus:ring-2 focus:ring-primary focus:outline-none"
+                        className="flex-grow p-4 border border-gray-300 rounded-lg text-lg focus:ring-2 focus:ring-teal-700 focus:outline-none"
                       />
-                      <button type="submit" className="bg-primary text-white px-8 rounded-lg font-bold hover:bg-teal-800">
+                      <button type="submit" className="bg-teal-700 text-white px-8 rounded-lg font-bold hover:bg-teal-800">
                         确认
                       </button>
                     </form>
@@ -180,7 +179,7 @@ const App: React.FC = () => {
                         <button
                           key={opt}
                           onClick={() => processAnswer(opt, QuestionInputType.CHOICE)}
-                          className="text-left p-4 border border-gray-200 rounded-lg hover:border-primary hover:bg-teal-50 transition-all text-lg font-medium"
+                          className="text-left p-4 border border-gray-200 rounded-lg hover:border-teal-700 hover:bg-teal-50 transition-all text-lg font-medium"
                         >
                           {opt}
                         </button>
