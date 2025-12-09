@@ -681,4 +681,4 @@ export const QUESTIONS: Question[] = [
     options: ['1. 自己可以做', '2. 有些困难', '3. 需要帮助', '4. 根本无法做'],
     maxScore: 4
   }
-];</parameter>
+];
