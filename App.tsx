@@ -30,15 +30,11 @@ const App: React.FC = () => {
     let score = 0;
     let feedback = "";
     
-    // Auto-calculate ADL choice (Direct mapping)
     if (currentQuestion.assessmentType === AssessmentType.ADL) {
-       // Answer is string "1. ...", "2. ..."
-       // We parse the first char number. 
        const val = parseInt(answer.charAt(0));
        score = isNaN(val) ? 1 : val; 
        feedback = "自我报告。";
     } 
-    // AI Evaluation for others
     else if (currentQuestion.geminiPrompt) {
       const evaluation = await evaluateResponse(
         currentQuestion.geminiPrompt,
@@ -49,9 +45,8 @@ const App: React.FC = () => {
       score = evaluation.score;
       feedback = evaluation.reasoning;
     } 
-    // Fallback manual logic if no prompt
     else {
-      score = 1; // Default pass for demo
+      score = 1;
       feedback = "默认通过。";
     }
 
@@ -76,7 +71,6 @@ const App: React.FC = () => {
     });
   };
 
-  // Render Logic
   if (!patient) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
@@ -99,7 +93,6 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
-      {/* Header */}
       <header className="bg-white shadow-sm p-4 sticky top-0 z-10">
         <div className="max-w-4xl mx-auto flex justify-between items-center">
            <span className="font-bold text-teal-700 text-xl">NeuroGuard Evaluation</span>
@@ -110,11 +103,9 @@ const App: React.FC = () => {
         </div>
       </header>
 
-      {/* Main Content */}
       <main className="flex-grow flex items-center justify-center p-4">
         <div className="w-full max-w-3xl">
           
-          {/* Progress Bar */}
           <div className="mb-8">
             <div className="flex justify-between text-xs text-gray-500 mb-2">
               <span>Progress</span>
@@ -128,7 +119,6 @@ const App: React.FC = () => {
             </div>
           </div>
 
-          {/* Question Card */}
           <div className="bg-white rounded-2xl shadow-xl overflow-hidden min-h-[400px] flex flex-col">
             <div className="bg-teal-700 p-6 text-white">
               <div className="uppercase tracking-wide text-xs font-bold opacity-80 mb-2">
@@ -156,21 +146,34 @@ const App: React.FC = () => {
               ) : (
                 <div className="w-full">
                   {currentQuestion.inputType === QuestionInputType.TEXT && (
-                    <form onSubmit={(e) => {
-                      e.preventDefault();
-                      const val = (e.currentTarget.elements.namedItem('answer') as HTMLInputElement).value;
-                      if(val) processAnswer(val, QuestionInputType.TEXT);
-                    }} className="flex gap-2">
+                    <div className="flex gap-2" onKeyDown
+                      <div className="flex gap-2" onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        const input = e.currentTarget.querySelector('input') as HTMLInputElement;
+                        if (input?.value) {
+                          processAnswer(input.value, QuestionInputType.TEXT);
+                          input.value = '';
+                        }
+                      }
+                    }}>
                       <input 
-                        name="answer" 
                         autoFocus 
                         placeholder="请输入您的回答..." 
                         className="flex-grow p-4 border border-gray-300 rounded-lg text-lg focus:ring-2 focus:ring-teal-700 focus:outline-none"
                       />
-                      <button type="submit" className="bg-teal-700 text-white px-8 rounded-lg font-bold hover:bg-teal-800">
+                      <button 
+                        onClick={(e) => {
+                          const input = e.currentTarget.previousElementSibling as HTMLInputElement;
+                          if (input?.value) {
+                            processAnswer(input.value, QuestionInputType.TEXT);
+                            input.value = '';
+                          }
+                        }}
+                        className="bg-teal-700 text-white px-8 rounded-lg font-bold hover:bg-teal-800"
+                      >
                         确认
                       </button>
-                    </form>
+                    </div>
                   )}
 
                   {currentQuestion.inputType === QuestionInputType.CHOICE && (
