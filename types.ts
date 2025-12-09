@@ -1,17 +1,18 @@
-enum AssessmentType {
+// 添加 export 关键字
+export enum AssessmentType {
   MMSE = 'MMSE',
   MOCA = 'MOCA',
   ADL = 'ADL'
 }
 
-enum QuestionInputType {
+export enum QuestionInputType {
   CHOICE = 'CHOICE',
   TEXT = 'TEXT',
   AUDIO = 'AUDIO',
   DRAWING = 'DRAWING'
 }
 
-interface Question {
+export interface Question {
   id: string;
   assessmentType: AssessmentType;
   text: string;
@@ -19,12 +20,12 @@ interface Question {
   inputType: QuestionInputType;
   options?: string[];
   maxScore: number;
-  grokPrompt?: string;
+  geminiPrompt?: string;  // 改为 geminiPrompt
   category: string;
   imageReference?: string;
 }
 
-interface PatientInfo {
+export interface PatientInfo {
   name: string;
   age: number;
   educationYears: number;
@@ -32,10 +33,16 @@ interface PatientInfo {
   idNumber: string;
 }
 
-interface AssessmentState {
+export interface AssessmentState {
   currentStep: number;
   answers: Record<string, any>;
   scores: Record<string, number>;
   aiFeedback: Record<string, string>;
   isProcessing: boolean;
+}
+
+export interface ScaleResult {
+  rawScore: number;
+  maxScore: number;
+  interpretation: string;
 }
