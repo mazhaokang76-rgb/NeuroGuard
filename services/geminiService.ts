@@ -1,4 +1,4 @@
-import { GoogleGenAI, SchemaType } from "@google/genai";
+import { GoogleGenAI, Type } from "@google/genai";
 
 const apiKey = process.env.API_KEY || '';
 const ai = new GoogleGenAI({ apiKey });
@@ -86,10 +86,10 @@ export const evaluateResponse = async (
       config: {
         responseMimeType: 'application/json',
         responseSchema: {
-          type: SchemaType.OBJECT,
+          type: Type.OBJECT,
           properties: {
-            score: { type: SchemaType.NUMBER },
-            reasoning: { type: SchemaType.STRING }
+            score: { type: Type.NUMBER },
+            reasoning: { type: Type.STRING }
           }
         }
       }
