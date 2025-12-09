@@ -9,12 +9,6 @@
       tailwind.config = {
         theme: {
           extend: {
-            colors: {
-              primary: '#0f766e', // teal-700
-              secondary: '#0d9488', // teal-600
-              accent: '#f59e0b', // amber-500
-              surface: '#f3f4f6', // gray-100
-            },
             fontFamily: {
               sans: ['Inter', 'system-ui', 'sans-serif'],
             }
@@ -38,19 +32,9 @@
         }
       }
     </style>
-  <script type="importmap">
-{
-  "imports": {
-    "react": "https://aistudiocdn.com/react@^19.2.1",
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/",
-    "react/": "https://aistudiocdn.com/react@^19.2.1/",
-    "recharts": "https://aistudiocdn.com/recharts@^3.5.1",
-    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.32.0"
-  }
-}
-</script>
-</head>
-  <body class="bg-surface text-gray-800 antialiased min-h-screen">
+  </head>
+  <body class="bg-gray-100 text-gray-800 antialiased min-h-screen">
     <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
   </body>
 </html>
