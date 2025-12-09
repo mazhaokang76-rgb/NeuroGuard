@@ -1,4 +1,4 @@
-// 添加 export 关键字
+// 完整替换文件内容
 export enum AssessmentType {
   MMSE = 'MMSE',
   MOCA = 'MOCA',
