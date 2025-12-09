@@ -5,7 +5,7 @@ import { ImageUploader } from './components/ImageUploader';
 import { AssessmentReport } from './components/AssessmentReport';
 import { QUESTIONS } from './constants';
 import { PatientInfo, AssessmentState, QuestionInputType, AssessmentType } from './types';
-import { evaluateResponse } from './services/geminiService';
+import { evaluateResponse } from './services/grokService';
 
 const App: React.FC = () => {
   const [patient, setPatient] = useState<PatientInfo | null>(null);
