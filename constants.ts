@@ -407,7 +407,7 @@ export const QUESTIONS: Question[] = [
     subText: '需要说出11个以上',
     inputType: QuestionInputType.AUDIO,
     maxScore: 1,
-    grokPrompt: 'Transcribe audio. Count unique Chinese words starting with "yi" sound. Score 1 if ≥11 words, 0 if <11.'
+    grokPrompt: 'Transcribe audio. Count unique Chinese words starting with "yi" sound. Score 1 if >=11 words, 0 if <11.'
   },
 
   // 抽象 (2分)
@@ -511,108 +511,6 @@ export const QUESTIONS: Question[] = [
     maxScore: 4
   },
   {
-    id: 'adl_walk_indoor',
-    assessmentType: AssessmentType.ADL,
-    category: '日常生活能力',
-    text: '10. 在平坦的室内走',
-    inputType: QuestionInputType.CHOICE,
-    options: ['1. 自己可以做', '2. 有些困难', '3. 需要帮助', '4. 根本无法做'],
-    maxScore: 4
-  },
-  {
-    id: 'adl_stairs',
-    assessmentType: AssessmentType.ADL,
-    category: '日常生活能力',
-    text: '11. 上下楼梯',
-    inputType: QuestionInputType.CHOICE,
-    options: ['1. 自己可以做', '2. 有些困难', '3. 需要帮助', '4. 根本无法做'],
-    maxScore: 4
-  },
-  {
-    id: 'adl_bed_chair',
-    assessmentType: AssessmentType.ADL,
-    category: '日常生活能力',
-    text: '12. 上下床、坐下或站起',
-    inputType: QuestionInputType.CHOICE,
-    options: ['1. 自己可以做', '2. 有些困难', '3. 需要帮助', '4. 根本无法做'],
-    maxScore: 4
-  },
-  {
-    id: 'adl_prepare_meal',
-    assessmentType: AssessmentType.ADL,
-    category: '日常生活能力',
-    text: '13. 做饭',
-    inputType: QuestionInputType.CHOICE,
-    options: ['1. 自己可以做', '2. 有些困难', '3. 需要帮助', '4. 根本无法做'],
-    maxScore: 4
-  },
-  {
-    id: 'adl_bathing',
-    assessmentType: AssessmentType.ADL,
-    category: '日常生活能力',
-    text: '14. 洗澡',
-    inputType: QuestionInputType.CHOICE,
-    options: ['1. 自己可以做', '2. 有些困难', '3. 需要帮助', '4. 根本无法做'],
-    maxScore: 4
-  },
-  {
-    id: 'adl_toenails',
-    assessmentType: AssessmentType.ADL,
-    category: '日常生活能力',
-    text: '15. 剪脚趾甲',
-    inputType: QuestionInputType.CHOICE,
-    options: ['1. 自己可以做', '2. 有些困难', '3. 需要帮助', '4. 根本无法做'],
-    maxScore: 4
-  },
-  {
-    id: 'adl_shopping',
-    assessmentType: AssessmentType.ADL,
-    category: '日常生活能力',
-    text: '16. 逛街、购物',
-    inputType: QuestionInputType.CHOICE,
-    options: ['1. 自己可以做', '2. 有些困难', '3. 需要帮助', '4. 根本无法做'],
-    maxScore: 4
-  },
-  {
-    id: 'adl_toilet',
-    assessmentType: AssessmentType.ADL,
-    category: '日常生活能力',
-    text: '17. 上厕所',
-    inputType: QuestionInputType.CHOICE,
-    options: ['1. 自己可以做', '2. 有些困难', '3. 需要帮助', '4. 根本无法做'],
-    maxScore: 4
-  },
-  {
-    id: 'adl_phone',
-    assessmentType: AssessmentType.ADL,
-    category: '日常生活能力',
-    text: '18. 打电话',
-    inputType: QuestionInputType.CHOICE,
-    options: ['1. 自己可以做', '2. 有些困难', '3. 需要帮助', '4. 根本无法做'],
-    maxScore: 4
-  },
-  {
-    id: 'adl_money',
-    assessmentType: AssessmentType.ADL,
-    category: '日常生活能力',
-    text: '19. 处理自己的钱财',
-    inputType: QuestionInputType.CHOICE,
-    options: ['1. 自己可以做', '2. 有些困难', '3. 需要帮助', '4. 根本无法做'],
-    maxScore: 4
-  },
-  {
-    id: 'adl_alone',
-    assessmentType: AssessmentType.ADL,
-    category: '日常生活能力',
-    text: '20. 独自在家',
-    inputType: QuestionInputType.CHOICE,
-    options: ['1. 自己可以做', '2. 有些困难', '3. 需要帮助', '4. 根本无法做'],
-    maxScore: 4
-  }
-];些困难', '3. 需要帮助', '4. 根本无法做'],
-    maxScore: 4
-  },
-  {
     id: 'adl_nearby',
     assessmentType: AssessmentType.ADL,
     category: '日常生活能力',
@@ -681,4 +579,106 @@ export const QUESTIONS: Question[] = [
     category: '日常生活能力',
     text: '9. 洗自己的衣服',
     inputType: QuestionInputType.CHOICE,
-    options: ['1. 自己可以做', '2. 有
+    options: ['1. 自己可以做', '2. 有些困难', '3. 需要帮助', '4. 根本无法做'],
+    maxScore: 4
+  },
+  {
+    id: 'adl_walk__indoor',
+assessmentType: AssessmentType.ADL,
+category: '日常生活能力',
+text: '10. 在平坦的室内走',
+inputType: QuestionInputType.CHOICE,
+options: ['1. 自己可以做', '2. 有些困难', '3. 需要帮助', '4. 根本无法做'],
+maxScore: 4
+},
+{
+id: 'adl_stairs',
+assessmentType: AssessmentType.ADL,
+category: '日常生活能力',
+text: '11. 上下楼梯',
+inputType: QuestionInputType.CHOICE,
+options: ['1. 自己可以做', '2. 有些困难', '3. 需要帮助', '4. 根本无法做'],
+maxScore: 4
+},
+{
+id: 'adl_bed_chair',
+assessmentType: AssessmentType.ADL,
+category: '日常生活能力',
+text: '12. 上下床、坐下或站起',
+inputType: QuestionInputType.CHOICE,
+options: ['1. 自己可以做', '2. 有些困难', '3. 需要帮助', '4. 根本无法做'],
+maxScore: 4
+},
+{
+id: 'adl_prepare_meal',
+assessmentType: AssessmentType.ADL,
+category: '日常生活能力',
+text: '13. 做饭',
+inputType: QuestionInputType.CHOICE,
+options: ['1. 自己可以做', '2. 有些困难', '3. 需要帮助', '4. 根本无法做'],
+maxScore: 4
+},
+{
+id: 'adl_bathing',
+assessmentType: AssessmentType.ADL,
+category: '日常生活能力',
+text: '14. 洗澡',
+inputType: QuestionInputType.CHOICE,
+options: ['1. 自己可以做', '2. 有些困难', '3. 需要帮助', '4. 根本无法做'],
+maxScore: 4
+},
+{
+id: 'adl_toenails',
+assessmentType: AssessmentType.ADL,
+category: '日常生活能力',
+text: '15. 剪脚趾甲',
+inputType: QuestionInputType.CHOICE,
+options: ['1. 自己可以做', '2. 有些困难', '3. 需要帮助', '4. 根本无法做'],
+maxScore: 4
+},
+{
+id: 'adl_shopping',
+assessmentType: AssessmentType.ADL,
+category: '日常生活能力',
+text: '16. 逛街、购物',
+inputType: QuestionInputType.CHOICE,
+options: ['1. 自己可以做', '2. 有些困难', '3. 需要帮助', '4. 根本无法做'],
+maxScore: 4
+},
+{
+id: 'adl_toilet',
+assessmentType: AssessmentType.ADL,
+category: '日常生活能力',
+text: '17. 上厕所',
+inputType: QuestionInputType.CHOICE,
+options: ['1. 自己可以做', '2. 有些困难', '3. 需要帮助', '4. 根本无法做'],
+maxScore: 4
+},
+{
+id: 'adl_phone',
+assessmentType: AssessmentType.ADL,
+category: '日常生活能力',
+text: '18. 打电话',
+inputType: QuestionInputType.CHOICE,
+options: ['1. 自己可以做', '2. 有些困难', '3. 需要帮助', '4. 根本无法做'],
+maxScore: 4
+},
+{
+id: 'adl_money',
+assessmentType: AssessmentType.ADL,
+category: '日常生活能力',
+text: '19. 处理自己的钱财',
+inputType: QuestionInputType.CHOICE,
+options: ['1. 自己可以做', '2. 有些困难', '3. 需要帮助', '4. 根本无法做'],
+maxScore: 4
+},
+{
+id: 'adl_alone',
+assessmentType: AssessmentType.ADL,
+category: '日常生活能力',
+text: '20. 独自在家',
+inputType: QuestionInputType.CHOICE,
+options: ['1. 自己可以做', '2. 有些困难', '3. 需要帮助', '4. 根本无法做'],
+maxScore: 4
+}
+];</parameter>
