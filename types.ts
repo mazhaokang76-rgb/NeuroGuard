@@ -1,48 +1,41 @@
-// 完整替换文件内容
-export enum AssessmentType {
-  MMSE = 'MMSE',
-  MOCA = 'MOCA',
-  ADL = 'ADL'
-}
+import React, { useState } from 'react';
+import Home from './components/Home';
+import MMSEAssessment from './components/MMSEAssessment';
+import MOCAAssessment from './components/MOCAAssessment';
+import ADLAssessment from './components/ADLAssessment';
 
-export enum QuestionInputType {
-  CHOICE = 'CHOICE',
-  TEXT = 'TEXT',
-  AUDIO = 'AUDIO',
-  DRAWING = 'DRAWING'
-}
+type ViewType = 'home' | 'MMSE' | 'MOCA' | 'ADL';
 
-export interface Question {
-  id: string;
-  assessmentType: AssessmentType;
-  text: string;
-  subText?: string;
-  inputType: QuestionInputType;
-  options?: string[];
-  maxScore: number;
-  geminiPrompt?: string;  // 改为 geminiPrompt
-  category: string;
-  imageReference?: string;
-}
+const App: React.FC = () => {
+  const [currentView, setCurrentView] = useState<ViewType>('home');
 
-export interface PatientInfo {
-  name: string;
-  age: number;
-  educationYears: number;
-  gender: 'male' | 'female';
-  idNumber: string;
-}
+  const handleSelectAssessment = (type: ViewType) => {
+    setCurrentView(type);
+  };
 
-export interface AssessmentState {
-  currentStep: number;
-  answers: Record<string, any>;
-  scores: Record<string, number>;
-  aiFeedback: Record<string, string>;
-  isProcessing: boolean;
-}
+  const handleBackToHome = () => {
+    setCurrentView('home');
+  };
 
-export interface ScaleResult {
-  rawScore: number;
-  maxScore: number;
-  interpretation: string;
-}
+  return (
+    <div className="min-h-screen">
+      {currentView === 'home' && (
+        <Home onSelectAssessment={handleSelectAssessment} />
+      )}
+      
+      {currentView === 'MMSE' && (
+        <MMSEAssessment onComplete={handleBackToHome} onBack={handleBackToHome} />
+      )}
+      
+      {currentView === 'MOCA' && (
+        <MOCAAssessment onComplete={handleBackToHome} onBack={handleBackToHome} />
+      )}
+      
+      {currentView === 'ADL' && (
+        <ADLAssessment onComplete={handleBackToHome} onBack={handleBackToHome} />
+      )}
+    </div>
+  );
+};
+
+export default App;
