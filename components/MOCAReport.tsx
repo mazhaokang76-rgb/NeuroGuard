@@ -130,8 +130,8 @@ export function MOCAReport({ patient, state, onRestart }: Props) {
             <h3 className="font-bold text-blue-900 mb-2">评分说明</h3>
             <ul className="text-sm text-blue-800 space-y-1">
               <li>• 总分30分，≥26分为认知功能正常</li>
-              <li>• 教育年限≤12年且得分<30分，加1分校正</li>
-              <li>• <26分提示可能存在认知功能障碍</li>
+               <li>• 教育年限≤12年且得分&lt;30分，加1分校正</li>
+               <li>• &lt;26分提示可能存在认知功能障碍</li>
               <li>• MoCA对轻度认知障碍(MCI)检测更敏感</li>
             </ul>
           </div>
