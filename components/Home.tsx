@@ -115,7 +115,7 @@ export default function Home({ onSelectAssessment }: HomeProps) {
 
         {/* Footer */}
         <div className="text-center mt-8 text-gray-500 text-sm">
-          <p>© 2025 NeuroGuard | Powered by Grok AI</p>
+          <p>© 上海智缘益慷科技有限公司</p>
         </div>
       </div>
     </div>
