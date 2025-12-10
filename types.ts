@@ -1,41 +1,56 @@
-import React, { useState } from 'react';
-import Home from './components/Home';
-import MMSEAssessment from './components/MMSEAssessment';
-import MOCAAssessment from './components/MOCAAssessment';
-import ADLAssessment from './components/ADLAssessment';
+// ==================== 基础类型定义 ====================
 
-type ViewType = 'home' | 'MMSE' | 'MOCA' | 'ADL';
+export interface PatientInfo {
+  name: string;
+  age: number;
+  educationYears: number;
+  gender: 'male' | 'female';
+  idNumber?: string;
+}
 
-const App: React.FC = () => {
-  const [currentView, setCurrentView] = useState<ViewType>('home');
+export interface AssessmentState {
+  currentStep: number;
+  answers: Record<string, any>;
+  scores: Record<string, number>;
+  aiFeedback: Record<string, string>;
+  isProcessing: boolean;
+}
 
-  const handleSelectAssessment = (type: ViewType) => {
-    setCurrentView(type);
-  };
+// ==================== 量表类型 ====================
 
-  const handleBackToHome = () => {
-    setCurrentView('home');
-  };
+export enum AssessmentType {
+  MMSE = 'MMSE',
+  MOCA = 'MOCA',
+  ADL = 'ADL'
+}
 
-  return (
-    <div className="min-h-screen">
-      {currentView === 'home' && (
-        <Home onSelectAssessment={handleSelectAssessment} />
-      )}
-      
-      {currentView === 'MMSE' && (
-        <MMSEAssessment onComplete={handleBackToHome} onBack={handleBackToHome} />
-      )}
-      
-      {currentView === 'MOCA' && (
-        <MOCAAssessment onComplete={handleBackToHome} onBack={handleBackToHome} />
-      )}
-      
-      {currentView === 'ADL' && (
-        <ADLAssessment onComplete={handleBackToHome} onBack={handleBackToHome} />
-      )}
-    </div>
-  );
-};
+export enum QuestionInputType {
+  TEXT = 'TEXT',
+  AUDIO = 'AUDIO',
+  DRAWING = 'DRAWING',
+  CHOICE = 'CHOICE'
+}
 
-export default App;
+// ==================== 题目定义 ====================
+
+export interface Question {
+  id: string;
+  assessmentType: AssessmentType;
+  category: string;
+  text: string;
+  subText?: string;
+  imageReference?: string;
+  answerKey?: string;
+  inputType: QuestionInputType;
+  options?: string[];
+  maxScore: number;
+  grokPrompt?: string;
+}
+
+// ==================== 评估结果 ====================
+
+export interface ScaleResult {
+  rawScore: number;
+  maxScore: number;
+  interpretation: string;
+}
