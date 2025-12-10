@@ -1,11 +1,19 @@
-import React, { useState } from 'react';
-import { Clock, Brain, Activity } from 'lucide-react';
+import React from 'react';
 
-const AssessmentCard = ({ title, subtitle, description, icon: Icon, color, onStart }) => (
+interface AssessmentCardProps {
+  title: string;
+  subtitle: string;
+  description: string;
+  icon: string;
+  color: string;
+  onStart: () => void;
+}
+
+const AssessmentCard: React.FC<AssessmentCardProps> = ({ title, subtitle, description, icon, color, onStart }) => (
   <div className="bg-white rounded-xl shadow-lg p-8 hover:shadow-2xl transition-all border-t-4" style={{ borderColor: color }}>
     <div className="flex items-center mb-4">
-      <div className="p-3 rounded-full" style={{ backgroundColor: `${color}20` }}>
-        <Icon size={32} style={{ color }} />
+      <div className="p-3 rounded-full text-4xl" style={{ backgroundColor: `${color}20` }}>
+        {icon}
       </div>
       <div className="ml-4">
         <h3 className="text-2xl font-bold text-gray-800">{title}</h3>
@@ -23,7 +31,11 @@ const AssessmentCard = ({ title, subtitle, description, icon: Icon, color, onSta
   </div>
 );
 
-export default function Home({ onSelectAssessment }) {
+interface HomeProps {
+  onSelectAssessment: (type: 'home' | 'MMSE' | 'MOCA' | 'ADL') => void;
+}
+
+export default function Home({ onSelectAssessment }: HomeProps) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-teal-50 py-12 px-4">
       <div className="max-w-6xl mx-auto">
@@ -53,7 +65,6 @@ export default function Home({ onSelectAssessment }) {
             title="MMSE"
             subtitle="简易精神状态检查"
             description="评估定向力、记忆力、注意力、语言能力等基本认知功能。适用于快速筛查认知障碍。30分制，<27分提示认知功能障碍。"
-            icon={Brain}
             color="#0f766e"
             onStart={() => onSelectAssessment('MMSE')}
           />
@@ -62,7 +73,6 @@ export default function Home({ onSelectAssessment }) {
             title="MoCA"
             subtitle="蒙特利尔认知评估"
             description="更全面的认知功能评估，包含视空间、执行功能、抽象思维等。对轻度认知障碍更敏感。30分制，<26分提示认知功能障碍。"
-            icon={Activity}
             color="#0d9488"
             onStart={() => onSelectAssessment('MOCA')}
           />
@@ -71,7 +81,6 @@ export default function Home({ onSelectAssessment }) {
             title="ADL"
             subtitle="日常生活能力量表"
             description="评估患者日常生活自理能力，包括基本生活活动和工具性日常活动。80分制，>26分提示功能下降。"
-            icon={Clock}
             color="#f59e0b"
             onStart={() => onSelectAssessment('ADL')}
           />
@@ -106,7 +115,7 @@ export default function Home({ onSelectAssessment }) {
 
         {/* Footer */}
         <div className="text-center mt-8 text-gray-500 text-sm">
-          <p>© 2025 上海智缘益慷科技有限公司</p>
+          <p>© 2025 NeuroGuard | Powered by Grok AI</p>
         </div>
       </div>
     </div>
