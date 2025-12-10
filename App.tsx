@@ -6,7 +6,7 @@ import ADLAssessment from './components/ADLAssessment';
 
 type ViewType = 'home' | 'MMSE' | 'MOCA' | 'ADL';
 
-const App: React.FC = () => {
+function App() {
   const [currentView, setCurrentView] = useState<ViewType>('home');
 
   const handleSelectAssessment = (type: ViewType) => {
@@ -36,5 +36,6 @@ const App: React.FC = () => {
       )}
     </div>
   );
-};
-export default app;
+}
+
+export default App;
