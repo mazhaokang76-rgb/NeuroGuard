@@ -37,5 +37,7 @@ const App: React.FC = () => {
     </div>
   );
 };
-
-export default App;
+export default Home;
+export default MMSEAssessment;
+export default MOCAAssessment;
+export default ADLAssessment;
