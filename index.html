@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>卒中后认知障碍(PSCI) 智能评估系统</title>
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
         theme: {
@@ -16,6 +18,7 @@
         }
       }
     </script>
+    
     <style>
       @media print {
         .no-print {
@@ -27,14 +30,34 @@
         body {
           background: white;
         }
-        .page-break {
-          page-break-before: always;
-        }
+      }
+      
+      /* Loading animation */
+      .loading {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(15, 118, 110, 0.3);
+        border-radius: 50%;
+        border-top-color: #0f766e;
+        animation: spin 1s ease-in-out infinite;
+      }
+      
+      @keyframes spin {
+        to { transform: rotate(360deg); }
       }
     </style>
   </head>
   <body class="bg-gray-100 text-gray-800 antialiased min-h-screen">
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
+    
+    <!-- Fallback if script fails -->
+    <noscript>
+      <div style="padding: 20px; text-align: center;">
+        <h1>需要启用 JavaScript</h1>
+        <p>此应用需要 JavaScript 才能运行，请在浏览器中启用 JavaScript。</p>
+      </div>
+    </noscript>
   </body>
 </html>
