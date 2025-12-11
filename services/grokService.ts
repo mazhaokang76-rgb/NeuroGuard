@@ -20,6 +20,50 @@ export interface EvaluationResult {
   reasoning: string;
 }
 
+// 清理 JSON 响应
+function cleanJsonResponse(text: string): string {
+  // 移除 markdown 代码块标记
+  let cleaned = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+  
+  // 尝试提取 JSON 对象
+  const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
+  if (jsonMatch) {
+    cleaned = jsonMatch[0];
+  }
+  
+  return cleaned;
+}
+
+// 解析响应，更严格的错误处理
+function parseGrokResponse(text: string): EvaluationResult {
+  try {
+    const cleaned = cleanJsonResponse(text);
+    const parsed = JSON.parse(cleaned);
+    
+    // 验证必需字段
+    if (typeof parsed.score === 'undefined' || typeof parsed.reasoning === 'undefined') {
+      throw new Error('Missing required fields');
+    }
+    
+    return {
+      score: Number(parsed.score),
+      reasoning: String(parsed.reasoning)
+    };
+  } catch (error) {
+    console.error('Failed to parse Grok response:', text);
+    console.error('Parse error:', error);
+    
+    // 尝试从文本中提取分数
+    const scoreMatch = text.match(/score["\s:]+(\d+)/i);
+    const score = scoreMatch ? parseInt(scoreMatch[1]) : 0;
+    
+    return {
+      score,
+      reasoning: `解析失败，使用默认评分。原始响应: ${text.substring(0, 100)}...`
+    };
+  }
+}
+
 export const evaluateResponse = async (
   prompt: string,
   textInput?: string,
@@ -27,27 +71,26 @@ export const evaluateResponse = async (
   audioBlob?: Blob
 ): Promise<EvaluationResult> => {
   if (!GROK_API_KEY) {
-    console.warn("No Grok API Key provided. Returning mock score.");
-    return { score: 1, reasoning: "API Key 缺失，使用模拟评分。" };
+    console.warn("No Grok API Key provided.");
+    return { score: 0, reasoning: "API Key 缺失" };
   }
 
   try {
     const messages: any[] = [];
     const content: any[] = [];
     
-    let fullPrompt = `You are a medical AI grading a cognitive assessment.
-Task: ${prompt}
+    // 强化 prompt，要求严格 JSON 格式
+    let fullPrompt = `You are a medical AI evaluating cognitive assessment responses.
 
-Return ONLY valid JSON in this exact format:
-{"score": <number>, "reasoning": "brief Chinese explanation"}
+CRITICAL: You MUST respond with ONLY a valid JSON object, no other text before or after.
 
-Important: 
-- For questions asking to count items, return the exact count as score
-- For yes/no questions, return 1 for correct, 0 for incorrect
-- For multi-point questions, return the earned points (e.g., 0-3 or 0-5)`;
+${prompt}
+
+Required response format (NOTHING else):
+{"score": <number>, "reasoning": "<brief explanation in Chinese>"}`;
 
     if (textInput) {
-      fullPrompt += `\n\nUser Text Answer: "${textInput}"`;
+      fullPrompt += `\n\nUser's text answer: "${textInput}"`;
     }
     
     content.push({ type: 'text', text: fullPrompt });
@@ -63,16 +106,11 @@ Important:
       });
     }
 
-    // Add audio if provided (Grok supports audio analysis)
+    // Note: Grok vision model may have limited audio support
+    // For audio, we'll note it in the prompt
     if (audioBlob) {
-      const base64Data = await blobToBase64(audioBlob);
-      // For audio, we describe it as a file in the prompt
-      content.push({
-        type: 'text',
-        text: `[Audio file provided - transcribe and analyze the speech]`
-      });
-      // Note: Full audio support may require different API endpoint
-      // For now, we'll process it as best as possible
+      fullPrompt += `\n\n[Note: User provided audio response - transcription may be needed]`;
+      content[0].text = fullPrompt;
     }
 
     messages.push({ role: 'user', content });
@@ -86,31 +124,36 @@ Important:
       body: JSON.stringify({
         model: 'grok-2-vision-1212',
         messages,
-        temperature: 0.3,
-        max_tokens: 500
+        temperature: 0.1, // 降低温度以获得更一致的输出
+        max_tokens: 500,
+        response_format: { type: "json_object" } // 强制 JSON 模式
       })
     });
 
     if (!response.ok) {
       const errorText = await response.text();
       console.error('Grok API Error:', errorText);
-      throw new Error(`Grok API failed: ${response.status}`);
+      throw new Error(`Grok API failed: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();
-    const resultText = data.choices[0]?.message?.content || '{"score":0,"reasoning":"评估失败"}';
+    const resultText = data.choices[0]?.message?.content;
     
-    // Clean up markdown code blocks if present
-    const cleaned = resultText.replace(/```json\n?|\n?```/g, '').trim();
+    if (!resultText) {
+      throw new Error('No response content from Grok');
+    }
+
+    console.log('Grok raw response:', resultText); // 调试日志
     
-    const result = JSON.parse(cleaned) as EvaluationResult;
-    return result;
+    return parseGrokResponse(resultText);
 
   } catch (error) {
     console.error('Grok Evaluation Error:', error);
+    const errorMsg = error instanceof Error ? error.message : '未知错误';
+    
     return { 
       score: 0, 
-      reasoning: 'AI评估失败，请重试。Error: ' + (error as Error).message 
+      reasoning: `AI评估失败: ${errorMsg}` 
     };
   }
 };
