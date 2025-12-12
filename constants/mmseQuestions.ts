@@ -261,7 +261,7 @@ export const MMSE_QUESTIONS: Question[] = [
     assessmentType: AssessmentType.MMSE,
     category: '结构能力',
     text: '临摹两个相交的五边形',
-    imageReference: '/Pen.png',
+    imageReference: 'pics/Pan.png',
     inputType: QuestionInputType.DRAWING,
     maxScore: 1,
     answerKey: '两个五边形相交成四边形',
