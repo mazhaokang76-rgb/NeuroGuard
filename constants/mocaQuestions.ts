@@ -12,20 +12,7 @@ export const MOCA_QUESTIONS: Question[] = [
     inputType: QuestionInputType.DRAWING,
     maxScore: 1,
     answerKey: '从1开始，交替连接数字和中文字母：1-甲-2-乙-3-丙-4-丁-5',
-    grokPrompt: `评分标准(1分):
-- 正确连线: 必须从1开始，严格按照"数字→中文字母→数字"的交替顺序
-- 连线不能中断或交叉错误
-- 顺序: 1→甲→2→乙→3→丙→4→丁→5
-- 如果有任何错误(顺序错、漏连、多连)，得0分
-- 图片中必须能看到清晰的连线轨迹
-
-分析图片，检查:
-1. 是否从1开始
-2. 是否交替连接数字和汉字
-3. 顺序是否完全正确
-4. 线条是否清晰可见
-
-返回JSON: {"score": 0或1, "reasoning": "详细说明连线是否正确，指出具体错误(如有)"}`
+    grokPrompt: 'Analyze image. Check: (1) Lines connect 1→甲→2→乙→3→丙→4→丁→5 in order (2) No crossing errors. Return ONLY: {"score": 1, "reasoning": "正确"} or {"score": 0, "reasoning": "错误，因为..."}'
   },
 
   // 视空间/执行能力 - 立方体 (1分)
@@ -39,21 +26,7 @@ export const MOCA_QUESTIONS: Question[] = [
     inputType: QuestionInputType.DRAWING,
     maxScore: 1,
     answerKey: '必须画出三维立方体，有透视关系，所有线条和角度基本正确',
-    grokPrompt: `评分标准(1分):
-- 必须是三维图形(有前后透视关系)
-- 所有边都必须画出(12条边)
-- 平行线必须平行
-- 不能是平面正方形或长方形
-- 不能有多余的线条
-- 整体结构和比例大致正确
-
-严格评分要点:
-1. 是否有三维透视感(这是最关键的)
-2. 边数是否正确(应该看到12条边)
-3. 平行线是否保持平行
-4. 不接受二维图形
-
-返回JSON: {"score": 0或1, "reasoning": "说明立方体绘制质量，指出不符合要求之处"}`
+    grokPrompt: 'Analyze image. Check: (1) 3D cube with perspective (2) 12 edges visible (3) Parallel lines remain parallel. Return ONLY: {"score": 1, "reasoning": "正确3D立方体"} or {"score": 0, "reasoning": "不符合，因为..."}'
   },
 
   // 视空间/执行能力 - 画钟 (3分)
@@ -66,33 +39,7 @@ export const MOCA_QUESTIONS: Question[] = [
     inputType: QuestionInputType.DRAWING,
     maxScore: 3,
     answerKey: '轮廓(1分) + 数字(1分) + 指针(1分) = 3分',
-    grokPrompt: `评分标准(总分3分):
-
-【轮廓】(1分):
-- 必须是封闭的圆形或近似圆形
-- 不能有明显缺口
-- 椭圆形可以接受
-
-【数字】(1分):
-- 必须有12个数字(1-12)
-- 数字位置大致正确(12在上，6在下，3在右，9在左)
-- 允许有轻微位置偏差
-- 罗马数字可以接受
-- 不接受: 数字缺失、顺序错误、全部写在一边
-
-【指针】(1分):
-- 必须有两根指针(时针和分针)
-- 时针指向11(或11和12之间，因为是11:10)
-- 分针指向2(代表10分钟)
-- 两根指针长度应该不同
-- 不接受: 指针指向错误、只有一根指针、指针位置完全错误
-
-分析图片，分别评估三个要素:
-1. 轮廓是否合格
-2. 数字是否合格  
-3. 指针是否合格(重点检查11:10是否正确)
-
-返回JSON: {"score": 0到3, "reasoning": "分别说明轮廓(0/1)、数字(0/1)、指针(0/1)的得分理由"}`
+    grokPrompt: 'Analyze clock. Score 3 parts: (1) Circle contour=1pt (2) Numbers 1-12 positioned correctly=1pt (3) Hands at 11:10 (hour near 11, minute at 2)=1pt. Return ONLY: {"score": <0-3>, "reasoning": "轮廓X分+数字X分+指针X分"}'
   },
 
   // 命名 (3分)
@@ -106,22 +53,7 @@ export const MOCA_QUESTIONS: Question[] = [
     inputType: QuestionInputType.AUDIO,
     maxScore: 1,
     answerKey: '狮子',
-    grokPrompt: `评分标准(1分):
-正确答案: 狮子 / 狮 / Lion
-
-接受的答案:
-- "狮子"
-- "狮"
-- "Lion"
-- "公狮"/"雄狮"
-
-不接受:
-- 含糊不清的发音
-- "猫""老虎""动物"等不精确的答案
-- 完全错误的动物名称
-
-转录音频，检查是否准确说出"狮子"。
-返回JSON: {"score": 0或1, "reasoning": "说明回答是否正确，如果错误指出说的是什么"}`
+    grokPrompt: 'Transcribe audio. Check if says lion/狮子. Return ONLY: {"score": 1, "reasoning": "正确"} or {"score": 0, "reasoning": "错误，说的是..."}'
   },
 
   {
@@ -188,11 +120,7 @@ export const MOCA_QUESTIONS: Question[] = [
     inputType: QuestionInputType.TEXT,
     maxScore: 0,
     answerKey: '面孔、丝绒、寺庙、菊花、红色（学习阶段不计分）',
-    grokPrompt: `这是学习阶段，不计分。
-记录用户复述情况即可。
-词语: 面孔、丝绒、寺庙、菊花、红色
-
-返回JSON: {"score": 0, "reasoning": "学习阶段，已记录"}`
+    grokPrompt: 'This is learning phase, no scoring needed. Return: {"score": 0, "reasoning": "学习阶段已记录"}'
   },
 
   // 注意力 - 顺背数字 (1分)
@@ -205,19 +133,7 @@ export const MOCA_QUESTIONS: Question[] = [
     inputType: QuestionInputType.AUDIO,
     maxScore: 1,
     answerKey: '2 1 8 5 4',
-    grokPrompt: `评分标准(1分):
-正确答案: 2-1-8-5-4 (完全按顺序)
-
-必须完全正确:
-- 5个数字全部正确
-- 顺序完全正确
-- 不能有遗漏或增加
-
-一个数字错误 = 0分
-顺序错误 = 0分
-
-转录音频，检查数字序列。
-返回JSON: {"score": 0或1, "reasoning": "说明复述的数字序列，是否完全正确"}`
+    grokPrompt: 'Transcribe audio. Check if repeats: 2-1-8-5-4 (exact order). Return ONLY: {"score": 1, "reasoning": "正确"} or {"score": 0, "reasoning": "错误，说的是..."}'
   },
 
   // 注意力 - 倒背数字 (1分)
@@ -230,19 +146,7 @@ export const MOCA_QUESTIONS: Question[] = [
     inputType: QuestionInputType.AUDIO,
     maxScore: 1,
     answerKey: '2 4 7',
-    grokPrompt: `评分标准(1分):
-原始顺序: 7-4-2
-正确答案(倒序): 2-4-7
-
-必须完全正确:
-- 倒序后3个数字全对
-- 顺序正确
-- 不能有遗漏
-
-任何错误 = 0分
-
-转录音频，检查是否说出2-4-7。
-返回JSON: {"score": 0或1, "reasoning": "说明倒背结果，是否为2-4-7"}`
+    grokPrompt: 'Transcribe audio. Check if says: 2-4-7 (reversed from 7-4-2). Return ONLY: {"score": 1, "reasoning": "正确"} or {"score": 0, "reasoning": "错误，说的是..."}'
   },
 
   // 注意力 - 警觉性 (1分)
@@ -255,18 +159,7 @@ export const MOCA_QUESTIONS: Question[] = [
     inputType: QuestionInputType.AUDIO,
     maxScore: 1,
     answerKey: '数字1共出现10次，应该说10次"敲"',
-    grokPrompt: `评分标准(1分):
-序列中数字"1"出现10次
-正确次数: 10次
-
-得分标准:
-- 错误≤2次(说8-10次"敲"): 得1分
-- 错误>2次(说<8次或>12次): 得0分
-
-允许的误差范围: 8-12次都可接受
-
-转录音频，数一下说了几次"敲/tap/knock"。
-返回JSON: {"score": 0或1, "reasoning": "说了X次，应该10次，误差是否在允许范围内"}`
+    grokPrompt: 'Transcribe audio. Count how many times user says "敲/knock/tap". Should be 10 times (digit "1" appears 10 times). Score 1 if 8-12 times (±2 errors ok), else 0. Return ONLY: {"score": <0 or 1>, "reasoning": "说了X次"}'
   },
 
   // 注意力 - 连续减7 (3分)
@@ -279,20 +172,7 @@ export const MOCA_QUESTIONS: Question[] = [
     inputType: QuestionInputType.AUDIO,
     maxScore: 3,
     answerKey: '93, 86, 79, 72, 65',
-    grokPrompt: `评分标准(3分):
-正确答案: 93, 86, 79, 72, 65
-
-计分规则:
-- 4-5个正确: 3分
-- 2-3个正确: 2分  
-- 1个正确: 1分
-- 0个正确: 0分
-
-注意: 如果前面错了但后续按照错误结果继续正确减7，后续的算对
-例如: 说92, 85, 78, 71, 64 → 虽然第一个错了，但后续逻辑正确，算4个对
-
-转录音频，识别5个数字，计算正确个数。
-返回JSON: {"score": 0到3, "reasoning": "列出5个答案，说明各自对错，给出总分"}`
+    grokPrompt: 'Transcribe audio. Extract 5 numbers from speech. Count how many match: 93, 86, 79, 72, 65. Score: 4-5 correct=3pts, 2-3 correct=2pts, 1 correct=1pt, 0 correct=0pts. If first wrong but subsequent pattern correct, count those as correct. Return ONLY: {"score": <0-3>, "reasoning": "说出的5个数字是[...],正确X个"}'
   },
 
   // 语言 - 复述句子 (2分)
@@ -353,20 +233,7 @@ export const MOCA_QUESTIONS: Question[] = [
     inputType: QuestionInputType.AUDIO,
     maxScore: 1,
     answerKey: '需要说出11个或以上不重复的词',
-    grokPrompt: `评分标准(1分):
-≥11个不同的词: 1分
-<11个词: 0分
-
-要求:
-- 必须是"yi"音开头(任何声调)
-- 不计重复的词
-- 不计错误发音或非中文词
-- 只计算清晰可辨的词
-
-示例词: 医生、衣服、椅子、意思、一切、移动、疑问、仪器、艺术、音乐、银行...
-
-转录音频，数清晰的"yi"音开头词汇数量。
-返回JSON: {"score": 0或1, "reasoning": "共说出X个有效词汇(列出来)，是否≥11个"}`
+    grokPrompt: 'Transcribe audio. Count unique Chinese words starting with "yi" sound (医生,衣服,椅子,意思,etc). Score 1 if ≥11 words, else 0. Return ONLY: {"score": <0 or 1>, "reasoning": "说出X个词：[列举]"}'
   },
 
   // 抽象 (2分)
@@ -437,23 +304,7 @@ export const MOCA_QUESTIONS: Question[] = [
     inputType: QuestionInputType.AUDIO,
     maxScore: 5,
     answerKey: '面孔、丝绒、寺庙、菊花、红色',
-    grokPrompt: `评分标准(5分):
-5个词: 面孔、丝绒、寺庙、菊花、红色
-每正确回忆1个词得1分
-
-要求:
-- 必须是自主回忆(不能提示)
-- 词语必须准确
-- 顺序不重要
-- 近似词不算(如"脸"不等于"面孔")
-
-计分:
-- 说出全部5个: 5分
-- 说出4个: 4分
-- 依此类推
-
-转录音频，检查说出了哪几个词。
-返回JSON: {"score": 0到5, "reasoning": "回忆出: [列出词语]，共X个，得X分"}`
+    grokPrompt: 'Transcribe audio. Count recalled words from: 面孔, 丝绒, 寺庙, 菊花, 红色. Each correct word = 1 point. Return ONLY: {"score": <0-5>, "reasoning": "回忆出X个：[列出词语]"}'
   },
 
   // 定向力 (6分)
