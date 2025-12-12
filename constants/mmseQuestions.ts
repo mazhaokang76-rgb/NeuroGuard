@@ -40,7 +40,7 @@ export const MMSE_QUESTIONS: Question[] = [
     inputType: QuestionInputType.TEXT,
     maxScore: 1,
     answerKey: '当天日期（±1天可接受）',
-    grokPrompt: 'Today is around December 10, 2025. Check if answer is 9-11 (±1 day acceptable). Return ONLY: {"score": 1, "reasoning": "正确"} or {"score": 0, "reasoning": "错误"}'
+    grokPrompt: `Current date: ${new Date().toLocaleDateString('zh-CN')}. Today is day ${new Date().getDate()}. Check if answer is within ±1 day. Accept: ${new Date().getDate()-1}, ${new Date().getDate()}, ${new Date().getDate()+1}. Return ONLY: {"score": 1, "reasoning": "正确"} or {"score": 0, "reasoning": "错误"}`
   },
   {
     id: 'mmse_time_day',
@@ -50,7 +50,7 @@ export const MMSE_QUESTIONS: Question[] = [
     inputType: QuestionInputType.TEXT,
     maxScore: 1,
     answerKey: '星期三',
-    grokPrompt: 'December 10, 2025 is Wednesday. Check if answer matches (accept: 星期三, 周三, Wednesday, 礼拜三). ±1 day acceptable. Return ONLY: {"score": 1, "reasoning": "正确"} or {"score": 0, "reasoning": "错误"}'
+    grokPrompt: `Today is ${new Date().toLocaleDateString('en-US', {weekday: 'long'})} (${['星期日','星期一','星期二','星期三','星期四','星期五','星期六'][new Date().getDay()]}). Check if answer matches current day of week. Accept Chinese (星期X/周X/礼拜X) or English. Return ONLY: {"score": 1, "reasoning": "正确"} or {"score": 0, "reasoning": "错误"}`
   },
 
   // 定向力 - 地点 (5分)
@@ -261,7 +261,7 @@ export const MMSE_QUESTIONS: Question[] = [
     assessmentType: AssessmentType.MMSE,
     category: '结构能力',
     text: '临摹两个相交的五边形',
-    imageReference: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Interlocking_Pentagons.svg/320px-Interlocking_Pentagons.svg.png',
+    imageReference: '/Pen.png',
     inputType: QuestionInputType.DRAWING,
     maxScore: 1,
     answerKey: '两个五边形相交成四边形',
