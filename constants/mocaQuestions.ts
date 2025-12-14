@@ -8,7 +8,7 @@ export const MOCA_QUESTIONS: Question[] = [
     category: '视空间/执行能力',
     text: '交替连线测试',
     subText: '请按照 1→甲→2→乙→3→丙→4→丁→5 的顺序用笔连线',
-    imageReference: '/pics/Line.png',
+    imageReference: './pics/Line.png',
     inputType: QuestionInputType.DRAWING,
     maxScore: 1,
     answerKey: '从1开始，交替连接数字和中文字母：1-甲-2-乙-3-丙-4-丁-5',
