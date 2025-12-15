@@ -7,6 +7,7 @@ import { MOCAReport } from './MOCAReport';
 import { MOCA_QUESTIONS } from '../constants/mocaQuestions';
 import { PatientInfo, AssessmentState, QuestionInputType } from '../types';
 import { evaluateResponse } from '../services/grokService';
+import {AudioRecorder} from '../services/AudioRecorder';
 import { scoreMocaSerialSubtraction } from '../services/serialSubtractionScoring';
 import { ArrowLeft } from 'lucide-react';
 
