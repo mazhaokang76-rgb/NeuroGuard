@@ -1,4 +1,6 @@
 // Grok AI Service
+import { getUserLocation, LocationInfo } from './locationService';
+
 const GROK_API_KEY = import.meta.env.VITE_GROK_API_KEY || 'xai-vfPmbYaxu92AMqslSz8N1eVvRyK9XJVv1X8Fq3TWd29lMhFVMZO9HLJV6VmpVDCHV5VW9YXwzm4XBWWA';
 
 // Helper to convert Blob to Base64
@@ -79,12 +81,23 @@ export const evaluateResponse = async (
     const messages: any[] = [];
     const content: any[] = [];
     
+    // 获取位置信息（如果可用）
+    let locationContext = '';
+    try {
+      const location: LocationInfo = await getUserLocation();
+      if (location.province || location.city) {
+        locationContext = `\n\n【用户位置信息】省份: ${location.province || '未知'}, 城市: ${location.city || '未知'}, 区县: ${location.district || '未知'}`;
+      }
+    } catch (err) {
+      console.warn('无法获取位置信息', err);
+    }
+    
     // 强化 prompt，要求严格 JSON 格式
     let fullPrompt = `You are a medical AI evaluating cognitive assessment responses.
 
 CRITICAL: You MUST respond with ONLY a valid JSON object, no other text before or after.
 
-${prompt}
+${prompt}${locationContext}
 
 Required response format (NOTHING else):
 {"score": <number>, "reasoning": "<brief explanation in Chinese>"}`;
