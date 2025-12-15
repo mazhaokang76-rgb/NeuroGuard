@@ -10,7 +10,7 @@ interface AssessmentCardProps {
 }
 
 const AssessmentCard: React.FC<AssessmentCardProps> = ({ title, subtitle, description, icon, color, onStart }) => (
-  <div className="bg-gray rounded-xl shadow-lg p-8 hover:shadow-2xl transition-all border-t-4" style={{ borderColor: color }}>
+  <div className="bg-white rounded-xl shadow-lg p-8 hover:shadow-2xl transition-all border-t-4" style={{ borderColor: color }}>
     <div className="flex items-center mb-4">
       <div className="p-3 rounded-full text-4xl" style={{ backgroundColor: `${color}20` }}>
         {icon}
