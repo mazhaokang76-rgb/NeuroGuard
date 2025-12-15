@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { PatientForm } from './PatientForm';
 import { QuestionDisplay } from './QuestionDisplay';
-import { RealtimeVoiceRecorder } from './RealtimeVoiceRecorder';
+import { AudioRecorder } from './AudioRecorder';
 import { ImageUploader } from './ImageUploader';
 import { MMSEReport } from './MMSEReport';
 import { MMSE_QUESTIONS } from '../constants/mmseQuestions';
@@ -38,9 +38,6 @@ export default function MMSEAssessment({ onComplete, onBack }: Props) {
     let score = 0;
     let feedback = "";
     
-    // 音频输入已经在 RealtimeVoiceRecorder 中转换为文本
-    // 所以这里 answer 就是文本
-    
     // 特殊处理：连续减7题目（使用本地评分逻辑）
     if (currentQuestion.id.startsWith('mmse_serial7_')) {
       const questionIndex = parseInt(currentQuestion.id.split('_')[2]) - 1;
@@ -52,7 +49,6 @@ export default function MMSEAssessment({ onComplete, onBack }: Props) {
         : null;
       
       const standardAnswers = [93, 86, 79, 72, 65];
-      
       const result = scoreSerialSubtraction(
         answer,
         previousAnswer,
@@ -66,9 +62,9 @@ export default function MMSEAssessment({ onComplete, onBack }: Props) {
     else if (currentQuestion.grokPrompt) {
       const evaluation = await evaluateResponse(
         currentQuestion.grokPrompt,
-        type === QuestionInputType.TEXT || type === QuestionInputType.AUDIO ? answer : undefined,
+        type === QuestionInputType.TEXT ? answer : undefined,
         type === QuestionInputType.DRAWING ? answer : undefined,
-        undefined
+        type === QuestionInputType.AUDIO ? answer : undefined
       );
       score = evaluation.score;
       feedback = evaluation.reasoning;
