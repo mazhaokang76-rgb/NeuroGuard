@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { PatientForm } from './PatientForm';
 import { QuestionDisplay } from './QuestionDisplay';
-import { AudioRecorder } from './AudioRecorder';
+import { VoiceInput } from './VoiceInput';
 import { ImageUploader } from './ImageUploader';
 import { MMSEReport } from './MMSEReport';
 import { MMSE_QUESTIONS } from '../constants/mmseQuestions';
@@ -38,6 +38,8 @@ export default function MMSEAssessment({ onComplete, onBack }: Props) {
     let score = 0;
     let feedback = "";
     
+    console.log('处理答案:', { questionId: currentQuestion.id, answer, type });
+    
     // 特殊处理：连续减7题目（使用本地评分逻辑）
     if (currentQuestion.id.startsWith('mmse_serial7_')) {
       const questionIndex = parseInt(currentQuestion.id.split('_')[2]) - 1;
@@ -49,6 +51,7 @@ export default function MMSEAssessment({ onComplete, onBack }: Props) {
         : null;
       
       const standardAnswers = [93, 86, 79, 72, 65];
+      
       const result = scoreSerialSubtraction(
         answer,
         previousAnswer,
@@ -57,17 +60,25 @@ export default function MMSEAssessment({ onComplete, onBack }: Props) {
       
       score = result.score;
       feedback = result.reasoning;
+      console.log('连续减7评分:', result);
     }
     // 其他题目：使用 AI 评分
     else if (currentQuestion.grokPrompt) {
-      const evaluation = await evaluateResponse(
-        currentQuestion.grokPrompt,
-        type === QuestionInputType.TEXT ? answer : undefined,
-        type === QuestionInputType.DRAWING ? answer : undefined,
-        type === QuestionInputType.AUDIO ? answer : undefined
-      );
-      score = evaluation.score;
-      feedback = evaluation.reasoning;
+      try {
+        const evaluation = await evaluateResponse(
+          currentQuestion.grokPrompt,
+          type === QuestionInputType.TEXT || type === QuestionInputType.AUDIO ? answer : undefined,
+          type === QuestionInputType.DRAWING ? answer : undefined,
+          undefined
+        );
+        score = evaluation.score;
+        feedback = evaluation.reasoning;
+        console.log('AI评分结果:', evaluation);
+      } catch (error) {
+        console.error('AI评分失败:', error);
+        feedback = 'AI评分失败，已记录答案';
+        score = 0;
+      }
     } else {
       score = currentQuestion.maxScore;
       feedback = "已记录回答";
@@ -188,9 +199,9 @@ export default function MMSEAssessment({ onComplete, onBack }: Props) {
                 )}
 
                 {currentQuestion.inputType === QuestionInputType.AUDIO && (
-                  <AudioRecorder 
+                  <VoiceInput 
                     isProcessing={state.isProcessing} 
-                    onRecordingComplete={(blob) => processAnswer(blob, QuestionInputType.AUDIO)} 
+                    onComplete={(text) => processAnswer(text, QuestionInputType.AUDIO)} 
                   />
                 )}
 
