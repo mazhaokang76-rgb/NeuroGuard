@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
 import { PatientForm } from './PatientForm';
 import { QuestionDisplay } from './QuestionDisplay';
-import { RealtimeVoiceRecorder } from './RealtimeVoiceRecorder';
+import { AudioRecorder } from './AudioRecorder';
 import { ImageUploader } from './ImageUploader';
 import { MOCAReport } from './MOCAReport';
 import { MOCA_QUESTIONS } from '../constants/mocaQuestions';
 import { PatientInfo, AssessmentState, QuestionInputType } from '../types';
 import { evaluateResponse } from '../services/grokService';
-import {AudioRecorder} from '../services/AudioRecorder';
-import { scoreMocaSerialSubtraction } from '../services/serialSubtractionScoring';
 import { ArrowLeft } from 'lucide-react';
 
 interface Props {
@@ -39,19 +37,12 @@ export default function MOCAAssessment({ onComplete, onBack }: Props) {
     let score = 0;
     let feedback = "";
     
-    // 特殊处理：MoCA 连续减7（语音输入，答案已是文本）
-    if (currentQuestion.id === 'moca_attention_serial7') {
-      const result = scoreMocaSerialSubtraction(answer);
-      score = result.score;
-      feedback = result.reasoning;
-    }
-    // 其他题目：使用 AI 评分
-    else if (currentQuestion.grokPrompt) {
+    if (currentQuestion.grokPrompt) {
       const evaluation = await evaluateResponse(
         currentQuestion.grokPrompt,
-        type === QuestionInputType.TEXT || type === QuestionInputType.AUDIO ? answer : undefined,
+        type === QuestionInputType.TEXT ? answer : undefined,
         type === QuestionInputType.DRAWING ? answer : undefined,
-        undefined
+        type === QuestionInputType.AUDIO ? answer : undefined
       );
       score = evaluation.score;
       feedback = evaluation.reasoning;
