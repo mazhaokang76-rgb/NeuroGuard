@@ -1,4 +1,30 @@
+// constants/mocaQuestions.ts
 import { AssessmentType, Question, QuestionInputType } from '../types';
+
+// 辅助函数：根据月份判断季节（北半球）
+const getCurrentSeason = (): string => {
+  const month = new Date().getMonth() + 1;
+  if (month >= 3 && month <= 5) return '春季/春天/spring';
+  if (month >= 6 && month <= 8) return '夏季/夏天/summer';
+  if (month >= 9 && month <= 11) return '秋季/秋天/autumn/fall';
+  return '冬季/冬天/winter';
+};
+
+// 生成当前日期时间信息
+const getCurrentDateInfo = () => {
+  const now = new Date();
+  return {
+    year: now.getFullYear(),
+    month: now.getMonth() + 1,
+    date: now.getDate(),
+    day: now.getDay(),
+    dayName: ['星期日','星期一','星期二','星期三','星期四','星期五','星期六'][now.getDay()],
+    dayNameShort: ['周日','周一','周二','周三','周四','周五','周六'][now.getDay()],
+    monthName: ['January','February','March','April','May','June','July','August','September','October','November','December'][now.getMonth()],
+    monthNameCN: ['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'][now.getMonth()],
+    season: getCurrentSeason()
+  };
+};
 
 export const MOCA_QUESTIONS: Question[] = [
   // 视空间/执行能力 - 连线测试 (1分)
@@ -8,11 +34,11 @@ export const MOCA_QUESTIONS: Question[] = [
     category: '视空间/执行能力',
     text: '交替连线测试',
     subText: '请按照 1→甲→2→乙→3→丙→4→丁→5 的顺序用笔连线',
-    imageReference: './pics/Line.png',
+    imageReference: 'pics/trail_making.png',
     inputType: QuestionInputType.DRAWING,
     maxScore: 1,
     answerKey: '从1开始，交替连接数字和中文字母：1-甲-2-乙-3-丙-4-丁-5',
-    grokPrompt: 'Analyze image. Check: (1) Lines connect 1→甲→2→乙→3→丙→4→丁→5 in order (2) No crossing errors. Return ONLY: {"score": 1, "reasoning": "正确"} or {"score": 0, "reasoning": "错误，因为..."}'
+    grokPrompt: 'Analyze the drawing. Check if lines correctly connect in this EXACT sequence: 1→甲→2→乙→3→丙→4→丁→5. Requirements: (1) Correct alternating pattern (number-Chinese letter), (2) Correct order, (3) Lines connect endpoints (no skipping). Minor line quality issues OK. Return ONLY: {"score": 1, "reasoning": "顺序正确"} or {"score": 0, "reasoning": "错误，因为..."}'
   },
 
   // 视空间/执行能力 - 立方体 (1分)
@@ -22,11 +48,11 @@ export const MOCA_QUESTIONS: Question[] = [
     category: '视空间/执行能力',
     text: '复制立方体',
     subText: '请照着图片画出这个三维立方体',
-    imageReference: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Necker_cube.svg/240px-Necker_cube.svg.png',
+    imageReference: 'pics/cube.png',
     inputType: QuestionInputType.DRAWING,
     maxScore: 1,
-    answerKey: '必须画出三维立方体，有透视关系，所有线条和角度基本正确',
-    grokPrompt: 'Analyze image. Check: (1) 3D cube with perspective (2) 12 edges visible (3) Parallel lines remain parallel. Return ONLY: {"score": 1, "reasoning": "正确3D立方体"} or {"score": 0, "reasoning": "不符合，因为..."}'
+    answerKey: '三维立方体，透视关系正确，线条基本正确',
+    grokPrompt: 'Analyze the cube drawing. Requirements for 1 point: (1) 3D cube structure visible (not just 2D square), (2) Approximately 12 edges drawn, (3) Basic perspective maintained (parallel lines stay roughly parallel, depth shown). Minor drawing quality issues OK. Proportions do not need to be perfect. Return ONLY: {"score": 1, "reasoning": "正确3D立方体"} or {"score": 0, "reasoning": "不符合，因为..."}'
   },
 
   // 视空间/执行能力 - 画钟 (3分)
@@ -39,7 +65,7 @@ export const MOCA_QUESTIONS: Question[] = [
     inputType: QuestionInputType.DRAWING,
     maxScore: 3,
     answerKey: '轮廓(1分) + 数字(1分) + 指针(1分) = 3分',
-    grokPrompt: 'Analyze clock. Score 3 parts: (1) Circle contour=1pt (2) Numbers 1-12 positioned correctly=1pt (3) Hands at 11:10 (hour near 11, minute at 2)=1pt. Return ONLY: {"score": <0-3>, "reasoning": "轮廓X分+数字X分+指针X分"}'
+    grokPrompt: 'Analyze clock drawing. Score 3 parts separately: (1) CONTOUR: Circle drawn (roughly round, closed figure) = 1pt, (2) NUMBERS: All 12 numbers (1-12) present and roughly in correct positions around clock face = 1pt, (3) HANDS: Two hands pointing to 11:10 (hour hand between 11-12, minute hand at 2) = 1pt. Score each part independently. Return ONLY: {"score": <0-3>, "reasoning": "轮廓X分+数字X分+指针X分，具体说明..."}'
   },
 
   // 命名 (3分)
@@ -53,7 +79,7 @@ export const MOCA_QUESTIONS: Question[] = [
     inputType: QuestionInputType.AUDIO,
     maxScore: 1,
     answerKey: '狮子',
-    grokPrompt: 'Transcribe audio. Check if says lion/狮子. Return ONLY: {"score": 1, "reasoning": "正确"} or {"score": 0, "reasoning": "错误，说的是..."}'
+    grokPrompt: 'Transcribe audio carefully. Check if correctly identifies as LION (accept: 狮子, lion, male lion, 雄狮). Do NOT accept: 老虎 (tiger), 猫科 (feline family - too general), 大猫 (big cat). Return ONLY: {"score": 1, "reasoning": "正确识别为狮子"} or {"score": 0, "reasoning": "错误，说的是..."}'
   },
 
   {
@@ -66,21 +92,21 @@ export const MOCA_QUESTIONS: Question[] = [
     inputType: QuestionInputType.AUDIO,
     maxScore: 1,
     answerKey: '犀牛',
-    grokPrompt: `评分标准(1分):
-正确答案: 犀牛 / Rhinoceros / Rhino
+    grokPrompt: `Transcribe audio. Scoring (1 point):
 
-接受的答案:
+CORRECT answers:
 - "犀牛"
-- "Rhino"
 - "Rhinoceros"
+- "Rhino"  
+- "犀" (acceptable - specific enough)
 
-不接受:
-- "牛""水牛""野牛"(不够精确)
-- 含糊不清无法辨认
-- 完全错误的动物
+NOT ACCEPTED:
+- "牛" (too general - not specific enough)
+- "水牛" "野牛" (wrong species)
+- Unclear/inaudible
+- Completely wrong animal
 
-转录音频，检查是否准确说出"犀牛"。
-返回JSON: {"score": 0或1, "reasoning": "说明回答内容和准确性"}`
+Return ONLY: {"score": 0 or 1, "reasoning": "说了...，是否正确"}`
   },
 
   {
@@ -93,21 +119,20 @@ export const MOCA_QUESTIONS: Question[] = [
     inputType: QuestionInputType.AUDIO,
     maxScore: 1,
     answerKey: '骆驼',
-    grokPrompt: `评分标准(1分):
-正确答案: 骆驼 / Camel
+    grokPrompt: `Transcribe audio. Scoring (1 point):
 
-接受的答案:
+CORRECT answers:
 - "骆驼"
 - "Camel"
-- "单峰驼""双峰驼"(更精确的答案)
+- "单峰驼" "双峰驼" (more specific - correct)
+- "驼" (acceptable if clear)
 
-不接受:
-- "马""驴""羊驼"
-- 含糊不清
-- 其他错误动物
+NOT ACCEPTED:
+- "马" "驴" "羊" "羊驼" (wrong animals)
+- Unclear/inaudible
+- Generic non-answer
 
-转录音频，检查是否说"骆驼"。
-返回JSON: {"score": 0或1, "reasoning": "说明命名是否准确"}`
+Return ONLY: {"score": 0 or 1, "reasoning": "命名是否准确"}`
   },
 
   // 记忆 - 即时学习 (不计分)
@@ -116,11 +141,11 @@ export const MOCA_QUESTIONS: Question[] = [
     assessmentType: AssessmentType.MOCA,
     category: '记忆',
     text: '词语记忆学习',
-    subText: '我会说5个词，请仔细听并重复。这些词稍后会再问你。',
+    subText: '我会说5个词，请仔细听并重复：面孔、丝绒、寺庙、菊花、红色',
     inputType: QuestionInputType.TEXT,
     maxScore: 0,
     answerKey: '面孔、丝绒、寺庙、菊花、红色（学习阶段不计分）',
-    grokPrompt: 'This is learning phase, no scoring needed. Return: {"score": 0, "reasoning": "学习阶段已记录"}'
+    grokPrompt: 'This is the learning phase only. No scoring. Just acknowledge. Return: {"score": 0, "reasoning": "学习阶段已记录，稍后测试延迟回忆"}'
   },
 
   // 注意力 - 顺背数字 (1分)
@@ -133,7 +158,7 @@ export const MOCA_QUESTIONS: Question[] = [
     inputType: QuestionInputType.AUDIO,
     maxScore: 1,
     answerKey: '2 1 8 5 4',
-    grokPrompt: 'Transcribe audio. Check if repeats: 2-1-8-5-4 (exact order). Return ONLY: {"score": 1, "reasoning": "正确"} or {"score": 0, "reasoning": "错误，说的是..."}'
+    grokPrompt: 'Transcribe audio carefully. Extract the numbers spoken. Check if they match EXACTLY: 2-1-8-5-4 in that order. Accept: verbal (二一八五四) or digit pronunciation. Must be exact sequence with all 5 digits. Return ONLY: {"score": 1, "reasoning": "正确顺序"} or {"score": 0, "reasoning": "错误，说的是..."}'
   },
 
   // 注意力 - 倒背数字 (1分)
@@ -146,7 +171,7 @@ export const MOCA_QUESTIONS: Question[] = [
     inputType: QuestionInputType.AUDIO,
     maxScore: 1,
     answerKey: '2 4 7',
-    grokPrompt: 'Transcribe audio. Check if says: 2-4-7 (reversed from 7-4-2). Return ONLY: {"score": 1, "reasoning": "正确"} or {"score": 0, "reasoning": "错误，说的是..."}'
+    grokPrompt: 'Transcribe audio. Extract the numbers. Original sequence is 7-4-2, so REVERSED should be: 2-4-7. Check if user says exactly 2-4-7. Accept verbal or digit pronunciation. Return ONLY: {"score": 1, "reasoning": "正确倒背"} or {"score": 0, "reasoning": "错误，说的是..."}'
   },
 
   // 注意力 - 警觉性 (1分)
@@ -159,7 +184,7 @@ export const MOCA_QUESTIONS: Question[] = [
     inputType: QuestionInputType.AUDIO,
     maxScore: 1,
     answerKey: '数字1共出现10次，应该说10次"敲"',
-    grokPrompt: 'Transcribe audio. Count how many times user says "敲/knock/tap". Should be 10 times (digit "1" appears 10 times). Score 1 if 8-12 times (±2 errors ok), else 0. Return ONLY: {"score": <0 or 1>, "reasoning": "说了X次"}'
+    grokPrompt: 'Transcribe audio. Count how many times user says "敲" or "knock" or "tap" or describes tapping. Sequence has 10 occurrences of digit "1". Scoring: ≥8 correct responses (±2 errors allowed) = 1 point, <8 = 0 points. Return ONLY: {"score": 0 or 1, "reasoning": "说了X次敲，目标10次"}'
   },
 
   // 注意力 - 连续减7 (3分)
@@ -172,7 +197,7 @@ export const MOCA_QUESTIONS: Question[] = [
     inputType: QuestionInputType.AUDIO,
     maxScore: 3,
     answerKey: '93, 86, 79, 72, 65',
-    grokPrompt: 'Transcribe audio. Extract 5 numbers from speech. Count how many match: 93, 86, 79, 72, 65. Score: 4-5 correct=3pts, 2-3 correct=2pts, 1 correct=1pt, 0 correct=0pts. If first wrong but subsequent pattern correct, count those as correct. Return ONLY: {"score": <0-3>, "reasoning": "说出的5个数字是[...],正确X个"}'
+    grokPrompt: 'Transcribe audio. Extract 5 numbers. Correct sequence: 93, 86, 79, 72, 65. Count how many match. SCORING: 4-5 correct = 3 points, 2-3 correct = 2 points, 1 correct = 1 point, 0 correct = 0 points. If first answer wrong but subsequent subtractions correct (serial subtraction), count those as correct. Return ONLY: {"score": <0-3>, "reasoning": "说了[...], 正确X个"}'
   },
 
   // 语言 - 复述句子 (2分)
@@ -185,19 +210,17 @@ export const MOCA_QUESTIONS: Question[] = [
     inputType: QuestionInputType.AUDIO,
     maxScore: 1,
     answerKey: '我只知道今天小张来帮忙',
-    grokPrompt: `评分标准(1分):
-必须完全准确，一字不差。
+    grokPrompt: `Transcribe audio word by word. Scoring (1 point):
 
-正确: "我只知道今天小张来帮忙"
+Must be EXACTLY: "我只知道今天小张来帮忙"
 
-不接受:
-- 任何字词的改变、增加或遗漏
-- "我就知道今天小张来帮忙"(错)
-- "我只知道今天张某来帮忙"(错)
-- 语序错误
+NOT ACCEPTED (any deviation = 0 points):
+- "我就知道今天小张来帮忙" (就 ≠ 只)
+- "我只知道今天张某来帮忙" (张某 ≠ 小张)
+- "我只知道小张今天来帮忙" (word order wrong)
+- Any word added, removed, or changed
 
-转录音频，逐字对比。
-返回JSON: {"score": 0或1, "reasoning": "复述内容，是否完全准确"}`
+Must be word-perfect. Return ONLY: {"score": 0 or 1, "reasoning": "复述:[实际说的]，是否完全准确"}`
   },
 
   {
@@ -209,18 +232,17 @@ export const MOCA_QUESTIONS: Question[] = [
     inputType: QuestionInputType.AUDIO,
     maxScore: 1,
     answerKey: '狗在房间时，猫总躲在沙发下面',
-    grokPrompt: `评分标准(1分):
-必须完全准确。
+    grokPrompt: `Transcribe audio precisely. Scoring (1 point):
 
-正确: "狗在房间时，猫总躲在沙发下面"
+Must be EXACTLY: "狗在房间时，猫总躲在沙发下面"
 
-不接受任何改动:
-- 字词错误
-- 语序错误  
-- 增加或遗漏
+NOT ACCEPTED:
+- Any word substitution
+- Any word order change
+- Any word added or omitted
+- "狗在房间里时..." (里 added - wrong)
 
-转录后逐字对比原句。
-返回JSON: {"score": 0或1, "reasoning": "复述是否一字不差"}`
+Must be word-perfect. Return ONLY: {"score": 0 or 1, "reasoning": "复述:[实际]，是否一字不差"}`
   },
 
   // 语言 - 流畅性 (1分)
@@ -233,7 +255,7 @@ export const MOCA_QUESTIONS: Question[] = [
     inputType: QuestionInputType.AUDIO,
     maxScore: 1,
     answerKey: '需要说出11个或以上不重复的词',
-    grokPrompt: 'Transcribe audio. Count unique Chinese words starting with "yi" sound (医生,衣服,椅子,意思,etc). Score 1 if ≥11 words, else 0. Return ONLY: {"score": <0 or 1>, "reasoning": "说出X个词：[列举]"}'
+    grokPrompt: 'Transcribe audio. Count UNIQUE Chinese words starting with "yi" sound (一/医/衣/椅/意/议/艺/易/益/异/忆/义/仪/宜/etc). Examples: 医生,衣服,椅子,意思,一样,艺术,容易,议论,etc. Do NOT count: repetitions, non-yi-starting words, numbers only (一二三). SCORING: ≥11 unique words = 1 point, <11 = 0 points. Return ONLY: {"score": 0 or 1, "reasoning": "说出X个词:[列举]"}'
   },
 
   // 抽象 (2分)
@@ -246,24 +268,22 @@ export const MOCA_QUESTIONS: Question[] = [
     inputType: QuestionInputType.TEXT,
     maxScore: 1,
     answerKey: '交通工具 / 运输工具',
-    grokPrompt: `评分标准(1分):
-必须说出抽象类别概念。
+    grokPrompt: `Scoring (1 point): Must identify ABSTRACT CATEGORY, not concrete features.
 
-接受的答案:
-- "交通工具"
-- "运输工具"
-- "代步工具"
-- "Transportation"
+CORRECT (abstract category):
+- "交通工具" (transportation)
+- "运输工具" (transport)
+- "代步工具" (means of transport)
+- "车辆" (vehicles)
+- "Transportation" / "Vehicle"
 
-不接受:
-- "都有轮子"(具体特征，不是抽象类别)
-- "都能动"(太宽泛)
-- "都是东西"(无意义)
-- 具体功能描述而非类别
+NOT ACCEPTED (concrete features, not abstract):
+- "都有轮子" (both have wheels - concrete feature)
+- "都能动" (both move - too vague)
+- "都是东西" (both are things - meaningless)
+- Functional descriptions instead of category
 
-关键: 必须是上位概念/类别。
-
-返回JSON: {"score": 0或1, "reasoning": "回答的类别是否正确抽象"}`
+Key: Must be superordinate concept/category. Return ONLY: {"score": 0 or 1, "reasoning": "回答类别是否抽象正确"}`
   },
 
   {
@@ -275,23 +295,20 @@ export const MOCA_QUESTIONS: Question[] = [
     inputType: QuestionInputType.TEXT,
     maxScore: 1,
     answerKey: '测量工具 / 度量工具',
-    grokPrompt: `评分标准(1分):
-必须说出抽象类别。
+    grokPrompt: `Scoring (1 point): Must identify ABSTRACT CATEGORY.
 
-接受的答案:
-- "测量工具"
-- "度量工具"
-- "测量仪器"
+CORRECT:
+- "测量工具" (measuring tools)
+- "度量工具" (instruments for measurement)
+- "测量仪器" (measuring instruments)
 - "Measuring tools/instruments"
 
-不接受:
-- "都有刻度"(具体特征)
-- "都是工具"(太宽泛，手表主要不是工具)
-- "都能看时间/长度"(功能描述，不是类别)
+NOT ACCEPTED:
+- "都有刻度" (both have scales - concrete feature)
+- "都是工具" (both are tools - too vague, watch is not primarily a tool)
+- "都能看时间/长度" (functional description, not category)
 
-关键: 测量/度量这个概念。
-
-返回JSON: {"score": 0或1, "reasoning": "是否正确识别测量工具这一类别"}`
+Key: Must recognize measurement/calibration concept. Return ONLY: {"score": 0 or 1, "reasoning": "是否识别测量工具类别"}`
   },
 
   // 延迟回忆 (5分)
@@ -304,7 +321,7 @@ export const MOCA_QUESTIONS: Question[] = [
     inputType: QuestionInputType.AUDIO,
     maxScore: 5,
     answerKey: '面孔、丝绒、寺庙、菊花、红色',
-    grokPrompt: 'Transcribe audio. Count recalled words from: 面孔, 丝绒, 寺庙, 菊花, 红色. Each correct word = 1 point. Return ONLY: {"score": <0-5>, "reasoning": "回忆出X个：[列出词语]"}'
+    grokPrompt: 'Transcribe audio. Count how many of these EXACT words are spontaneously recalled: 面孔 (face), 丝绒 (velvet), 寺庙 (church/temple), 菊花 (daisy/chrysanthemum), 红色 (red). Each correctly recalled word = 1 point. Must be unprompted recall. Accept slight pronunciation variations but NOT synonyms (e.g., 脸 ≠ 面孔, 庙 alone ≠ 寺庙). Return ONLY: {"score": <0-5>, "reasoning": "回忆出X个:[列出词]"}'
   },
 
   // 定向力 (6分)
@@ -315,17 +332,18 @@ export const MOCA_QUESTIONS: Question[] = [
     text: '今天是几号？',
     inputType: QuestionInputType.TEXT,
     maxScore: 1,
-    answerKey: '当天日期',
-    grokPrompt: `评分标准(1分):
-正确说出当天日期。
-±1天误差可接受。
+    answerKey: `${getCurrentDateInfo().date}号`,
+    grokPrompt: `Scoring (1 point):
+Current date: ${getCurrentDateInfo().year}年${getCurrentDateInfo().month}月${getCurrentDateInfo().date}日
+Today is ${getCurrentDateInfo().date}号.
 
-今天参考日期: 2025年12月10日左右
+ACCEPT: ±1 day error tolerated
+- ${getCurrentDateInfo().date-1}号, ${getCurrentDateInfo().date}号, ${getCurrentDateInfo().date+1}号
+- With or without 号/日
 
-接受: 10号、10日、December 10
-不接受: 差距>1天
+NOT ACCEPT: >1 day difference
 
-返回JSON: {"score": 0或1, "reasoning": "回答X号，是否正确"}`
+Return ONLY: {"score": 0 or 1, "reasoning": "回答X号，今天是${getCurrentDateInfo().date}号"}`
   },
 
   {
@@ -335,13 +353,18 @@ export const MOCA_QUESTIONS: Question[] = [
     text: '现在是几月份？',
     inputType: QuestionInputType.TEXT,
     maxScore: 1,
-    answerKey: '12月 / December',
-    grokPrompt: `评分标准(1分):
-正确答案: 12月 / December / 十二月
+    answerKey: `${getCurrentDateInfo().month}月`,
+    grokPrompt: `Scoring (1 point):
+Current month: ${getCurrentDateInfo().month}月 (${getCurrentDateInfo().monthName} / ${getCurrentDateInfo().monthNameCN})
 
-必须准确，不接受其他月份。
+ACCEPT:
+- ${getCurrentDateInfo().month}, ${getCurrentDateInfo().month}月
+- ${getCurrentDateInfo().monthNameCN}
+- ${getCurrentDateInfo().monthName}
 
-返回JSON: {"score": 0或1, "reasoning": "是否正确回答12月"}`
+Must be exact month. No tolerance.
+
+Return ONLY: {"score": 0 or 1, "reasoning": "回答是否正确，现在是${getCurrentDateInfo().month}月"}`
   },
 
   {
@@ -351,13 +374,18 @@ export const MOCA_QUESTIONS: Question[] = [
     text: '今年是哪一年？',
     inputType: QuestionInputType.TEXT,
     maxScore: 1,
-    answerKey: '2025',
-    grokPrompt: `评分标准(1分):
-正确答案: 2025
+    answerKey: `${getCurrentDateInfo().year}年`,
+    grokPrompt: `Scoring (1 point):
+Current year: ${getCurrentDateInfo().year}
 
-必须准确。
+ACCEPT:
+- ${getCurrentDateInfo().year}
+- ${getCurrentDateInfo().year}年
+- Chinese number format
 
-返回JSON: {"score": 0或1, "reasoning": "是否正确说出2025"}`
+Must be exact year.
+
+Return ONLY: {"score": 0 or 1, "reasoning": "是否正确，今年${getCurrentDateInfo().year}年"}`
   },
 
   {
@@ -367,14 +395,20 @@ export const MOCA_QUESTIONS: Question[] = [
     text: '今天是星期几？',
     inputType: QuestionInputType.TEXT,
     maxScore: 1,
-    answerKey: '当天星期',
-    grokPrompt: `评分标准(1分):
-必须说对今天是星期几。
-2025年12月10日是星期三。
+    answerKey: getCurrentDateInfo().dayName,
+    grokPrompt: `Scoring (1 point):
+Today: ${new Date().toLocaleDateString('en-US', {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'})}
+Day of week: ${getCurrentDateInfo().dayName} (${getCurrentDateInfo().dayNameShort})
 
-接受: 星期三、周三、Wednesday
+ACCEPT:
+- ${getCurrentDateInfo().dayName}
+- ${getCurrentDateInfo().dayNameShort}
+- ${new Date().toLocaleDateString('en-US', {weekday: 'long'})}
+- 礼拜${getCurrentDateInfo().day === 0 ? '日' : getCurrentDateInfo().day}
 
-返回JSON: {"score": 0或1, "reasoning": "回答是否正确"}`
+Must match current day exactly.
+
+Return ONLY: {"score": 0 or 1, "reasoning": "今天${getCurrentDateInfo().dayName}"}`
   },
 
   {
@@ -384,20 +418,26 @@ export const MOCA_QUESTIONS: Question[] = [
     text: '我们现在在什么地方？',
     inputType: QuestionInputType.TEXT,
     maxScore: 1,
-    answerKey: '合理的地点描述',
-    grokPrompt: `评分标准(1分):
-说出合理的地点即可。
+    answerKey: '医院/家里/诊所等合理地点',
+    grokPrompt: `Scoring (1 point):
+Must provide reasonable current location.
 
-接受:
-- 医院/诊所名称
-- 家里/家中
-- 具体地点名称
+ACCEPT:
+- Hospital name (XX医院)
+- "家里" / "家中" (home)
+- Clinic (诊所/卫生院)
+- Doctor's office (医务室)
+- Rehabilitation center (康复中心)
+- Specific place name
+- General descriptions like "在家", "医院"
 
-不接受:
-- 完全错误或荒谬
-- "不知道"
+NOT ACCEPT:
+- Completely absurd ("月球", "海底")
+- "不知道" without attempt
 
-返回JSON: {"score": 0或1, "reasoning": "地点描述是否合理"}`
+If user location context is provided, consider if consistent.
+
+Return ONLY: {"score": 0 or 1, "reasoning": "地点描述合理性"}`
   },
 
   {
@@ -407,15 +447,21 @@ export const MOCA_QUESTIONS: Question[] = [
     text: '我们现在在哪个城市？',
     inputType: QuestionInputType.TEXT,
     maxScore: 1,
-    answerKey: '实际所在城市',
-    grokPrompt: `评分标准(1分):
-说出合理的城市名称。
+    answerKey: '根据设备位置判断',
+    grokPrompt: `Scoring (1 point):
+Must provide reasonable city name.
 
-可以接受用户实际所在地的任何城市。
+If user location is provided in context (【用户位置信息】城市: XX), check if answer matches or is close.
 
-不接受: 明显错误或不是城市
+ACCEPT:
+- Exact match or reasonable variation (南京 vs 南京市)
+- If no location context: any valid Chinese city name
 
-返回JSON: {"score": 0或1, "reasoning": "城市名称是否合理"}`
+NOT ACCEPT:
+- Obviously not a city (village names, landmarks)
+- Nonsensical answers
+
+Return ONLY: {"score": 0 or 1, "reasoning": "城市名称合理性，如有位置信息则说明是否匹配"}`
   }
 ];
 
