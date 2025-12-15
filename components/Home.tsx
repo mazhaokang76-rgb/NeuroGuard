@@ -10,7 +10,7 @@ interface AssessmentCardProps {
 }
 
 const AssessmentCard: React.FC<AssessmentCardProps> = ({ title, subtitle, description, icon, color, onStart }) => (
-  <div className="bg-white rounded-xl shadow-lg p-8 hover:shadow-2xl transition-all border-t-4" style={{ borderColor: color }}>
+  <div className="bg-gray rounded-xl shadow-lg p-8 hover:shadow-2xl transition-all border-t-4" style={{ borderColor: color }}>
     <div className="flex items-center mb-4">
       <div className="p-3 rounded-full text-4xl" style={{ backgroundColor: `${color}20` }}>
         {icon}
@@ -48,7 +48,7 @@ export default function Home({ onSelectAssessment }: HomeProps) {
             Post-Stroke Cognitive Impairment Assessment System
           </p>
           <p className="text-sm text-gray-500 mt-2">
-            基于AI的智能化多维度认知功能评估
+            智缘益慷基于AI的智能化多维度认知功能评估
           </p>
         </div>
 
