@@ -91,7 +91,7 @@ export const MMSE_QUESTIONS: Question[] = [
     inputType: QuestionInputType.TEXT,
     maxScore: 1,
     answerKey: getCurrentDateInfo().dayName,
-    grokPrompt: `Today is ${new Date().toLocaleDateString('en-US', {weekday: 'long'})} (${getCurrentDateInfo().dayName} / ${getCurrentDateInfo().dayNameShort}). Check if answer matches current day of week. Accept: ${getCurrentDateInfo().dayName}, ${getCurrentDateInfo().dayNameShort}, ${new Date().toLocaleDateString('en-US', {weekday: 'long'})}, 礼拜${getCurrentDateInfo().day === 0 ? '日' : getCurrentDateInfo().day}. Return ONLY: {"score": 1, "reasoning": "正确"} or {"score": 0, "reasoning": "错误，今天是${getCurrentDateInfo().dayName}"}`
+    grokPrompt: `Today is ${new Date().toLocaleDateString('en-US', {weekday: 'long'})} (${getCurrentDateInfo().dayName} / ${getCurrentDateInfo().dayNameShort}). Check if answer matches current day of week  or reasonable variation (e.g.,礼拜一， 周一，一，1 vs 星期一). Accept: ${getCurrentDateInfo().dayName}, ${getCurrentDateInfo().dayNameShort}, ${new Date().toLocaleDateString('en-US', {weekday: 'long'})}, 礼拜${getCurrentDateInfo().day === 0 ? '日' : getCurrentDateInfo().day}. Return ONLY: {"score": 1, "reasoning": "正确"} or {"score": 0, "reasoning": "错误，今天是${getCurrentDateInfo().dayName}"}`
   },
 
   // 定向力 - 地点 (5分)
