@@ -83,7 +83,9 @@ export const PatientForm: React.FC<Props> = ({ onComplete }) => {
         <div className="pt-4">
           <button
             type="submit"
-            className="w-full bg-primary hover:bg-teal-800 text-white font-bold py-4 rounded-lg transition-colors shadow-md text-lg"
+              className="w-full bg-teal-600 hover:bg-teal-700 active:bg-teal-800 
+             text-white font-bold py-4 rounded-lg transition-colors 
+             duration-200 shadow-lg text-lg"
           >
             开始评估 (Start Assessment)
           </button>
