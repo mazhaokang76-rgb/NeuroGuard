@@ -47,7 +47,7 @@ export const MMSE_QUESTIONS: Question[] = [
     inputType: QuestionInputType.TEXT,
     maxScore: 1,
     answerKey: `${getCurrentDateInfo().year}年`,
-    grokPrompt: `Current year: ${getCurrentDateInfo().year}. Check if answer is ${getCurrentDateInfo().year} (accept: ${getCurrentDateInfo().year}, ${getCurrentDateInfo().year}年, Chinese number format). Return ONLY: {"score": 1, "reasoning": "正确"} or {"score": 0, "reasoning": "错误，今年是${getCurrentDateInfo().year}年"}`
+    grokPrompt: `Current year: ${getCurrentDateInfo().year}. Check if answer is ${getCurrentDateInfo().year} (accept: ${getCurrentDateInfo().year}, ${getCurrentDateInfo().year}年, Chinese number format and reasonable variety (e.g., 25 vs 2025)). Return ONLY: {"score": 1, "reasoning": "正确"} or {"score": 0, "reasoning": "错误，今年是${getCurrentDateInfo().year}年"}`
   },
   
   {
