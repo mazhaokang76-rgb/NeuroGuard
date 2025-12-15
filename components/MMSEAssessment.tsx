@@ -7,6 +7,7 @@ import { MMSEReport } from './MMSEReport';
 import { MMSE_QUESTIONS } from '../constants/mmseQuestions';
 import { PatientInfo, AssessmentState, QuestionInputType } from '../types';
 import { evaluateResponse } from '../services/grokService';
+import { scoreSerialSubtraction } from '../services/serialSubtractionScoring';
 import { ArrowLeft } from 'lucide-react';
 
 interface Props {
@@ -37,7 +38,28 @@ export default function MMSEAssessment({ onComplete, onBack }: Props) {
     let score = 0;
     let feedback = "";
     
-    if (currentQuestion.grokPrompt) {
+    // 特殊处理：连续减7题目（使用本地评分逻辑）
+    if (currentQuestion.id.startsWith('mmse_serial7_')) {
+      const questionIndex = parseInt(currentQuestion.id.split('_')[2]) - 1;
+      const previousQuestionId = questionIndex > 0 
+        ? `mmse_serial7_${questionIndex}` 
+        : null;
+      const previousAnswer = previousQuestionId 
+        ? state.answers[previousQuestionId] 
+        : null;
+      
+      const standardAnswers = [93, 86, 79, 72, 65];
+      const result = scoreSerialSubtraction(
+        answer,
+        previousAnswer,
+        standardAnswers[questionIndex]
+      );
+      
+      score = result.score;
+      feedback = result.reasoning;
+    }
+    // 其他题目：使用 AI 评分
+    else if (currentQuestion.grokPrompt) {
       const evaluation = await evaluateResponse(
         currentQuestion.grokPrompt,
         type === QuestionInputType.TEXT ? answer : undefined,
