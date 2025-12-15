@@ -129,7 +129,7 @@ export default function MMSEAssessment({ onComplete, onBack }: Props) {
             {state.isProcessing ? (
               <div className="text-center py-10">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-700 mx-auto mb-4"></div>
-                <p className="text-gray-600 animate-pulse">Grok AI 正在分析您的回答...</p>
+                <p className="text-gray-600 animate-pulse">AI 正在分析您的回答...</p>
               </div>
             ) : (
               <div className="w-full">
