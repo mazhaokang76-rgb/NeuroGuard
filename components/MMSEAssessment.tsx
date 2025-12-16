@@ -41,13 +41,19 @@ export default function MMSEAssessment({ onComplete, onBack }: Props) {
       answerLength: typeof answer === 'string' ? answer.length : 'N/A'
     });
 
+    // 防止重复处理
+    if (state.isProcessing) {
+      console.warn('⚠️ 正在处理中，忽略重复调用');
+      return;
+    }
+
     setState(prev => ({ ...prev, isProcessing: true }));
 
     let score = 0;
     let feedback = "";
     
     try {
-      // 特殊处理：连续减7题目（使用本地评分逻辑）
+      // 特殊处理：连续减7题目
       if (currentQuestion.id.startsWith('mmse_serial7_')) {
         const questionIndex = parseInt(currentQuestion.id.split('_')[2]) - 1;
         const previousQuestionId = questionIndex > 0 
@@ -87,21 +93,26 @@ export default function MMSEAssessment({ onComplete, onBack }: Props) {
         console.log('✅ 直接记录答案');
       }
 
-      // 更新状态并进入下一题
+      // 保存答案并进入下一题
       console.log('💾 保存答案并进入下一题');
-      setState(prev => ({
-        ...prev,
-        isProcessing: false,
-        answers: { ...prev.answers, [currentQuestion.id]: answer },
-        scores: { ...prev.scores, [currentQuestion.id]: score },
-        aiFeedback: { ...prev.aiFeedback, [currentQuestion.id]: feedback },
-        currentStep: prev.currentStep + 1
-      }));
       
-      console.log('✅ 答案处理完成，已进入下一题');
+      setState(prev => {
+        const newState = {
+          ...prev,
+          isProcessing: false,
+          answers: { ...prev.answers, [currentQuestion.id]: answer },
+          scores: { ...prev.scores, [currentQuestion.id]: score },
+          aiFeedback: { ...prev.aiFeedback, [currentQuestion.id]: feedback },
+          currentStep: prev.currentStep + 1
+        };
+        
+        console.log('✅ 状态更新完成，新步骤:', newState.currentStep);
+        return newState;
+      });
       
     } catch (error) {
       console.error('❌ 处理答案时出错:', error);
+      
       // 即使出错也要继续
       setState(prev => ({
         ...prev,
