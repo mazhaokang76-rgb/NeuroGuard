@@ -41,6 +41,7 @@ export interface Question {
   subText?: string;
   imageReference?: string;
   answerKey?: string;
+  audioSrc?: string;
   inputType: QuestionInputType;
   options?: string[];
   maxScore: number;
