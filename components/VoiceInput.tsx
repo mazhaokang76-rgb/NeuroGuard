@@ -7,8 +7,9 @@ interface Props {
 }
 
 export const VoiceInput: React.FC<Props> = ({ onComplete, isProcessing }) => {
-  const [isRecording, setIsRecording] = useState(false);
-  const [recordedText, setRecordedText] = useState('');
+  // 三个状态：idle(初始), recording(录音中), completed(录音完成)
+  const [stage, setStage] = useState<'idle' | 'recording' | 'completed'>('idle');
+  const [recognizedText, setRecognizedText] = useState('');
   const [duration, setDuration] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [browserSupport, setBrowserSupport] = useState<{
@@ -34,40 +35,52 @@ export const VoiceInput: React.FC<Props> = ({ onComplete, isProcessing }) => {
     };
   }, []);
 
+  // 开始录音
   const startRecording = () => {
     setError(null);
-    setRecordedText('');
+    setRecognizedText('');
     setDuration(0);
+    setStage('recording');
 
     recognitionRef.current = new WebSpeechRecognition({
       lang: 'zh-CN',
       continuous: true,
-      interimResults: false  // 不显示临时结果，保持简洁
+      interimResults: false
     });
 
     const started = recognitionRef.current.start(
       (result) => {
-        // 只保存最终结果
+        // 保存最终识别结果
         if (result.isFinal && result.text) {
-          setRecordedText(result.text);
+          console.log('🎤 识别到文本:', result.text);
+          setRecognizedText(result.text);
         }
       },
       (errorMsg) => {
-        console.error('识别错误:', errorMsg);
+        console.error('❌ 识别错误:', errorMsg);
         setError(errorMsg);
-        setIsRecording(false);
+        setStage('idle');
         if (timerRef.current) {
           clearInterval(timerRef.current);
         }
       },
-      () => {
-        setIsRecording(false);
+      (finalText) => {
+        // 录音自然结束
+        console.log('🎤 录音结束，最终文本:', finalText);
         if (timerRef.current) {
           clearInterval(timerRef.current);
         }
+        if (finalText && finalText.trim()) {
+          setRecognizedText(finalText);
+          setStage('completed');
+        } else {
+          setError('未识别到语音内容');
+          setStage('idle');
+        }
       },
       () => {
-        setIsRecording(true);
+        // 录音开始
+        console.log('🎤 开始录音');
         timerRef.current = setInterval(() => {
           setDuration(prev => prev + 1);
         }, 1000);
@@ -76,10 +89,13 @@ export const VoiceInput: React.FC<Props> = ({ onComplete, isProcessing }) => {
 
     if (!started) {
       setError('启动录音失败');
+      setStage('idle');
     }
   };
 
+  // 停止录音
   const stopRecording = () => {
+    console.log('🛑 用户停止录音');
     if (recognitionRef.current) {
       const finalText = recognitionRef.current.stop();
       
@@ -87,24 +103,42 @@ export const VoiceInput: React.FC<Props> = ({ onComplete, isProcessing }) => {
         clearInterval(timerRef.current);
       }
 
-      // 使用已记录的文本或最终文本
-      const textToSubmit = recordedText || finalText;
+      console.log('🎤 停止后获取的文本:', finalText);
+      console.log('🎤 当前已识别文本:', recognizedText);
 
-      if (textToSubmit && textToSubmit.trim().length > 0) {
-        console.log('识别结果:', textToSubmit);
-        // 立即提交，不等待用户确认
-        onComplete(textToSubmit);
+      // 使用已识别的文本或最终文本
+      const textToUse = recognizedText || finalText;
+
+      if (textToUse && textToUse.trim().length > 0) {
+        setRecognizedText(textToUse);
+        setStage('completed');
+        console.log('✅ 录音完成，等待用户确认');
       } else {
-        setError('未识别到语音内容');
-        setIsRecording(false);
+        setError('未识别到语音内容，请重试');
+        setStage('idle');
       }
     }
   };
 
-  const retryRecording = () => {
-    setRecordedText('');
+  // 重新录音
+  const retry = () => {
+    console.log('🔄 重新录音');
+    setRecognizedText('');
     setError(null);
-    startRecording();
+    setStage('idle');
+    // 立即开始新的录音
+    setTimeout(() => startRecording(), 100);
+  };
+
+  // 确认提交
+  const confirm = () => {
+    console.log('✅ 用户确认提交:', recognizedText);
+    if (recognizedText && recognizedText.trim()) {
+      onComplete(recognizedText.trim());
+    } else {
+      setError('识别结果为空，请重新录音');
+      setStage('idle');
+    }
   };
 
   // 浏览器不支持
@@ -119,13 +153,13 @@ export const VoiceInput: React.FC<Props> = ({ onComplete, isProcessing }) => {
             <div className="flex-1">
               <p className="font-semibold text-red-900 text-sm mb-2">浏览器不支持语音识别</p>
               <p className="text-xs text-red-700 mb-2">
-                当前浏览器：<span className="font-semibold">{browserSupport.browser}</span>
+                当前：{browserSupport.browser}
               </p>
               <div className="bg-white p-2 rounded text-xs">
-                <p className="font-semibold text-gray-900 mb-1">解决方案：</p>
-                <ul className="list-disc list-inside space-y-0.5 text-gray-700">
-                  <li>使用 Chrome 浏览器（推荐）</li>
-                  <li>使用 Edge 或 Safari</li>
+                <p className="font-semibold mb-1">请使用：</p>
+                <ul className="list-disc list-inside space-y-0.5">
+                  <li>Chrome 浏览器（推荐）</li>
+                  <li>Edge 或 Safari</li>
                 </ul>
               </div>
             </div>
@@ -137,23 +171,15 @@ export const VoiceInput: React.FC<Props> = ({ onComplete, isProcessing }) => {
 
   return (
     <div className="flex flex-col items-center gap-4 py-4 w-full">
-      {/* 错误提示 - 精简版 */}
-      {error && (
+      {/* 错误提示 */}
+      {error && stage === 'idle' && (
         <div className="w-full max-w-md bg-orange-50 border border-orange-300 p-3 rounded-lg">
-          <div className="flex items-center justify-between">
-            <p className="text-sm text-orange-800">{error}</p>
-            <button 
-              onClick={retryRecording}
-              className="text-xs text-orange-700 hover:text-orange-900 font-medium underline"
-            >
-              重试
-            </button>
-          </div>
+          <p className="text-sm text-orange-800">{error}</p>
         </div>
       )}
 
-      {/* 录音控制 */}
-      {!isRecording ? (
+      {/* 阶段1: 初始状态 - 显示"开始录音"按钮 */}
+      {stage === 'idle' && (
         <div className="flex flex-col items-center gap-3">
           <button
             onClick={startRecording}
@@ -169,13 +195,12 @@ export const VoiceInput: React.FC<Props> = ({ onComplete, isProcessing }) => {
             </svg>
             <span>开始录音</span>
           </button>
-          
-          {/* 仅在有错误或重新录音时显示提示 */}
-          {!error && (
-            <p className="text-xs text-gray-500">点击按钮后请清晰说出答案</p>
-          )}
+          <p className="text-xs text-gray-500">点击按钮后开始说话</p>
         </div>
-      ) : (
+      )}
+
+      {/* 阶段2: 录音中 - 显示"停止录音"按钮 */}
+      {stage === 'recording' && (
         <div className="flex flex-col items-center gap-4">
           {/* 录音动画 */}
           <div className="flex items-center gap-2 h-12">
@@ -200,7 +225,7 @@ export const VoiceInput: React.FC<Props> = ({ onComplete, isProcessing }) => {
             </span>
           </div>
 
-          {/* 停止按钮 */}
+          {/* 停止录音按钮 */}
           <button
             onClick={stopRecording}
             className="flex items-center gap-2 px-8 py-4 rounded-xl bg-red-500 hover:bg-red-600 text-white font-bold shadow-lg transition-all"
@@ -211,7 +236,71 @@ export const VoiceInput: React.FC<Props> = ({ onComplete, isProcessing }) => {
             <span>停止录音</span>
           </button>
           
-          <p className="text-xs text-gray-600">说完后请点击"停止录音"</p>
+          <p className="text-xs text-gray-600">说完后点击"停止录音"</p>
+        </div>
+      )}
+
+      {/* 阶段3: 录音完成 - 显示识别结果、重试和确认按钮 */}
+      {stage === 'completed' && (
+        <div className="flex flex-col items-center gap-4 w-full max-w-md">
+          {/* 识别结果显示 */}
+          <div className="w-full bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl p-5 shadow-lg">
+            <div className="flex items-center gap-2 mb-3">
+              <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span className="text-sm font-bold text-green-900">识别结果</span>
+            </div>
+            
+            <div className="bg-white p-4 rounded-lg border-2 border-green-100">
+              <p className="text-gray-900 text-xl font-medium text-center">
+                {recognizedText}
+              </p>
+            </div>
+            
+            <div className="flex items-center justify-center mt-3 text-xs text-gray-600">
+              <span>{recognizedText.length} 字符</span>
+            </div>
+          </div>
+
+          {/* 操作按钮 */}
+          <div className="flex gap-3 w-full">
+            {/* 重试按钮 */}
+            <button
+              onClick={retry}
+              disabled={isProcessing}
+              className={`flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-bold transition-all border-2 ${
+                isProcessing
+                  ? 'bg-gray-100 border-gray-300 text-gray-400 cursor-not-allowed'
+                  : 'bg-white border-orange-300 text-orange-600 hover:bg-orange-50 hover:border-orange-400'
+              }`}
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+              <span>重试</span>
+            </button>
+
+            {/* 确认按钮 */}
+            <button
+              onClick={confirm}
+              disabled={isProcessing}
+              className={`flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-bold transition-all shadow-lg ${
+                isProcessing
+                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  : 'bg-green-600 hover:bg-green-700 text-white hover:shadow-xl'
+              }`}
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+              <span>确认</span>
+            </button>
+          </div>
+
+          <p className="text-xs text-gray-500 text-center">
+            如识别不准确请点击"重试"，确认无误后点击"确认"
+          </p>
         </div>
       )}
     </div>
