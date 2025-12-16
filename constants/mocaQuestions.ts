@@ -318,7 +318,7 @@ Key: Must recognize measurement/calibration concept. Return ONLY: {"score": 0 or
     inputType: QuestionInputType.AUDIO,
     maxScore: 5,
     answerKey: '面孔、丝绒、寺庙、菊花、红色',
-    grokPrompt: 'Transcribe audio. Count how many of these words or same pronunciation in chinese are spontaneously recalled: 面孔 (face), 丝绒 (velvet), 寺庙 (church/temple), 菊花 (daisy/chrysanthemum), 红色 (red). Each correctly recalled word = 1 point. Must be unprompted recall. Accept slight pronunciation variations but NOT synonyms (e.g., 脸 ≠ 面孔, 庙 alone ≠ 寺庙). Return ONLY: {"score": <0-5>, "reasoning": "回忆出X个:[列出词]"}''  },
+    grokPrompt: 'Transcribe audio. Count how many of these words or same pronunciation in chinese are spontaneously recalled: 面孔 (face), 丝绒 (velvet), 寺庙 (church/temple), 菊花 (daisy/chrysanthemum), 红色 (red). Each correctly recalled word = 1 point. Must be unprompted recall. Accept slight pronunciation variations but NOT synonyms (e.g., 脸 ≠ 面孔, 庙 alone ≠ 寺庙). Return ONLY: {"score": <0-5>, "reasoning": "回忆出X个:[列出词]"}'  },
 
   // 定向力 (6分)
   {
