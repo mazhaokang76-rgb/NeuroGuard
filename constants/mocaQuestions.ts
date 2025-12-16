@@ -142,9 +142,9 @@ Return ONLY: {"score": 0 or 1, "reasoning": "命名是否准确"}`
     category: '记忆',
     text: '词语记忆学习',
     subText: '我会说5个词，请仔细听并重复：面孔、丝绒、寺庙、菊花、红色',
-    inputType: QuestionInputType.TEXT,
+    audioSrc: '/voice/voicepiece.mp3', // 新增
+    inputType: QuestionInputType.AUDIO,
     maxScore: 0,
-    answerKey: '面孔、丝绒、寺庙、菊花、红色（学习阶段不计分）',
     grokPrompt: 'This is the learning phase only. No scoring. Just acknowledge. Return: {"score": 0, "reasoning": "学习阶段已记录，稍后测试延迟回忆"}'
   },
 
@@ -153,11 +153,10 @@ Return ONLY: {"score": 0 or 1, "reasoning": "命名是否准确"}`
     id: 'moca_attention_forward',
     assessmentType: AssessmentType.MOCA,
     category: '注意力',
-    text: '顺背数字',
-    subText: '我说一串数字，请你按照同样的顺序重复: 2 1 8 5 4',
+    text: '请按顺序重复这些数字：2、1、5、4、3',
+    audioSrc: '/voice/remember1.mp3', // 新增
     inputType: QuestionInputType.AUDIO,
     maxScore: 1,
-    answerKey: '2 1 8 5 4',
     grokPrompt: 'Transcribe audio carefully. Extract the numbers spoken. Check if they match EXACTLY: 2-1-8-5-4 in that order. Accept: verbal (二一八五四) or digit pronunciation. Must be exact sequence with all 5 digits. Return ONLY: {"score": 1, "reasoning": "正确顺序"} or {"score": 0, "reasoning": "错误，说的是..."}'
   },
 
@@ -166,11 +165,10 @@ Return ONLY: {"score": 0 or 1, "reasoning": "命名是否准确"}`
     id: 'moca_attention_backward',
     assessmentType: AssessmentType.MOCA,
     category: '注意力',
-    text: '倒背数字',
-    subText: '我说一串数字，请你倒着说回来: 7 4 2',
+    text: '请倒着重复这些数字：5、4、2',
+    audioSrc: '/voice/remember2.mp3', // 新增
     inputType: QuestionInputType.AUDIO,
     maxScore: 1,
-    answerKey: '2 4 7',
     grokPrompt: 'Transcribe audio. Extract the numbers. Original sequence is 7-4-2, so REVERSED should be: 2-4-7. Check if user says exactly 2-4-7. Accept verbal or digit pronunciation. Return ONLY: {"score": 1, "reasoning": "正确倒背"} or {"score": 0, "reasoning": "错误，说的是..."}'
   },
 
@@ -181,9 +179,8 @@ Return ONLY: {"score": 0 or 1, "reasoning": "命名是否准确"}`
     category: '注意力',
     text: '警觉性测试',
     subText: '我会读一串数字，每当你听到"1"时，请说"敲"或敲击桌子。数字序列: 5 2 1 3 9 4 1 1 8 0 6 2 1 5 1 9 4 5 1 1 1 4 1 9 0 5 1 1 2',
+    audioSrc: '/voice/knock.mp3', // 新增
     inputType: QuestionInputType.AUDIO,
-    maxScore: 1,
-    answerKey: '数字1共出现10次，应该说10次"敲"',
     grokPrompt: 'Transcribe audio. Count how many times user says "敲" or "knock" or "tap" or describes tapping. Sequence has 10 occurrences of digit "1". Scoring: ≥8 correct responses (±2 errors allowed) = 1 point, <8 = 0 points. Return ONLY: {"score": 0 or 1, "reasoning": "说了X次敲，目标10次"}'
   },
 
@@ -321,8 +318,7 @@ Key: Must recognize measurement/calibration concept. Return ONLY: {"score": 0 or
     inputType: QuestionInputType.AUDIO,
     maxScore: 5,
     answerKey: '面孔、丝绒、寺庙、菊花、红色',
-    grokPrompt: 'Transcribe audio. Count how many of these EXACT words are spontaneously recalled: 面孔 (face), 丝绒 (velvet), 寺庙 (church/temple), 菊花 (daisy/chrysanthemum), 红色 (red). Each correctly recalled word = 1 point. Must be unprompted recall. Accept slight pronunciation variations but NOT synonyms (e.g., 脸 ≠ 面孔, 庙 alone ≠ 寺庙). Return ONLY: {"score": <0-5>, "reasoning": "回忆出X个:[列出词]"}'
-  },
+    grokPrompt: 'Transcribe audio. Count how many of these words or same pronunciation in chinese are spontaneously recalled: 面孔 (face), 丝绒 (velvet), 寺庙 (church/temple), 菊花 (daisy/chrysanthemum), 红色 (red). Each correctly recalled word = 1 point. Must be unprompted recall. Accept slight pronunciation variations but NOT synonyms (e.g., 脸 ≠ 面孔, 庙 alone ≠ 寺庙). Return ONLY: {"score": <0-5>, "reasoning": "回忆出X个:[列出词]"}''  },
 
   // 定向力 (6分)
   {
