@@ -33,23 +33,30 @@ export default function MOCAAssessment({ onComplete, onBack }: Props) {
   };
 
   const processAnswer = async (answer: any, type: QuestionInputType) => {
+    console.log('📝 MoCA开始处理答案:', { 
+      questionId: currentQuestion.id, 
+      answer, 
+      type,
+      answerType: typeof answer 
+    });
+
     setState(prev => ({ ...prev, isProcessing: true }));
 
     let score = 0;
     let feedback = "";
     
-    console.log('处理MoCA答案:', { questionId: currentQuestion.id, answer, type });
-    
-    // 特殊处理：MoCA 连续减7（语音输入，答案已是文本）
-    if (currentQuestion.id === 'moca_attention_serial7') {
-      const result = scoreMocaSerialSubtraction(answer);
-      score = result.score;
-      feedback = result.reasoning;
-      console.log('MoCA连续减7评分:', result);
-    }
-    // 其他题目：使用 AI 评分
-    else if (currentQuestion.grokPrompt) {
-      try {
+    try {
+      // 特殊处理：MoCA 连续减7
+      if (currentQuestion.id === 'moca_attention_serial7') {
+        console.log('🔢 MoCA连续减7评分...');
+        const result = scoreMocaSerialSubtraction(answer);
+        score = result.score;
+        feedback = result.reasoning;
+        console.log('✅ MoCA连续减7评分完成:', result);
+      }
+      // 其他题目：使用 AI 评分
+      else if (currentQuestion.grokPrompt) {
+        console.log('🤖 调用AI评分...');
         const evaluation = await evaluateResponse(
           currentQuestion.grokPrompt,
           type === QuestionInputType.TEXT || type === QuestionInputType.AUDIO ? answer : undefined,
@@ -58,25 +65,38 @@ export default function MOCAAssessment({ onComplete, onBack }: Props) {
         );
         score = evaluation.score;
         feedback = evaluation.reasoning;
-        console.log('MoCA AI评分结果:', evaluation);
-      } catch (error) {
-        console.error('AI评分失败:', error);
-        feedback = 'AI评分失败，已记录答案';
-        score = 0;
+        console.log('✅ AI评分完成:', evaluation);
+      } else {
+        score = currentQuestion.maxScore;
+        feedback = "已记录回答";
+        console.log('✅ 直接记录答案');
       }
-    } else {
-      score = currentQuestion.maxScore;
-      feedback = "已记录回答";
-    }
 
-    setState(prev => ({
-      ...prev,
-      isProcessing: false,
-      answers: { ...prev.answers, [currentQuestion.id]: answer },
-      scores: { ...prev.scores, [currentQuestion.id]: score },
-      aiFeedback: { ...prev.aiFeedback, [currentQuestion.id]: feedback },
-      currentStep: prev.currentStep + 1
-    }));
+      // 更新状态并进入下一题
+      console.log('💾 保存答案并进入下一题');
+      setState(prev => ({
+        ...prev,
+        isProcessing: false,
+        answers: { ...prev.answers, [currentQuestion.id]: answer },
+        scores: { ...prev.scores, [currentQuestion.id]: score },
+        aiFeedback: { ...prev.aiFeedback, [currentQuestion.id]: feedback },
+        currentStep: prev.currentStep + 1
+      }));
+      
+      console.log('✅ 答案处理完成，已进入下一题');
+      
+    } catch (error) {
+      console.error('❌ 处理答案时出错:', error);
+      // 即使出错也要继续
+      setState(prev => ({
+        ...prev,
+        isProcessing: false,
+        answers: { ...prev.answers, [currentQuestion.id]: answer },
+        scores: { ...prev.scores, [currentQuestion.id]: 0 },
+        aiFeedback: { ...prev.aiFeedback, [currentQuestion.id]: '处理失败: ' + (error as Error).message },
+        currentStep: prev.currentStep + 1
+      }));
+    }
   };
 
   if (!patient) {
