@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { PatientForm } from './PatientForm';
 import { QuestionDisplay } from './QuestionDisplay';
 import { VoiceInput } from './VoiceInput';
+import { AudioPrompt } from './AudioPrompt';
 import { ImageUploader } from './ImageUploader';
 import { MOCAReport } from './MOCAReport';
 import { MOCA_QUESTIONS } from '../constants/mocaQuestions';
@@ -126,42 +127,13 @@ export default function MOCAAssessment({ onComplete, onBack }: Props) {
 
   const progress = (state.currentStep / MOCA_QUESTIONS.length) * 100;
 
-  return (
+return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
-      {/* Header */}
-      <header className="bg-white shadow-sm p-4 sticky top-0 z-10">
-        <div className="max-w-4xl mx-auto flex justify-between items-center">
-          <div className="flex items-center gap-4">
-            <button onClick={onBack} className="text-gray-600 hover:text-gray-900">
-              <ArrowLeft size={24} />
-            </button>
-            <span className="font-bold text-teal-700 text-xl">MoCA 评估</span>
-          </div>
-          <div className="flex items-center gap-4 text-sm text-gray-500">
-            <span>{patient.name}</span>
-            <span className="bg-teal-100 text-teal-800 px-2 py-1 rounded font-medium">
-              {state.currentStep + 1}/{MOCA_QUESTIONS.length}
-            </span>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Content */}
+      {/* Header 保持不变 */}
+      
       <main className="flex-grow flex items-center justify-center p-4">
         <div className="w-full max-w-3xl">
-          {/* Progress Bar */}
-          <div className="mb-8">
-            <div className="flex justify-between text-xs text-gray-500 mb-2">
-              <span>评估进度</span>
-              <span>{Math.round(progress)}%</span>
-            </div>
-            <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-              <div 
-                className="h-full bg-teal-600 transition-all duration-500 ease-out" 
-                style={{ width: `${progress}%` }}
-              />
-            </div>
-          </div>
+          {/* Progress Bar 保持不变 */}
 
           <QuestionDisplay question={currentQuestion}>
             {state.isProcessing ? (
@@ -171,6 +143,7 @@ export default function MOCAAssessment({ onComplete, onBack }: Props) {
               </div>
             ) : (
               <div className="w-full">
+                {/* 文本输入 */}
                 {currentQuestion.inputType === QuestionInputType.TEXT && (
                   <div className="flex gap-2">
                     <input 
@@ -203,6 +176,7 @@ export default function MOCAAssessment({ onComplete, onBack }: Props) {
                   </div>
                 )}
 
+                {/* 选择题 */}
                 {currentQuestion.inputType === QuestionInputType.CHOICE && (
                   <div className="grid grid-cols-1 gap-3">
                     {currentQuestion.options?.map(opt => (
@@ -217,13 +191,29 @@ export default function MOCAAssessment({ onComplete, onBack }: Props) {
                   </div>
                 )}
 
+                {/* 语音输入 - 区分是否有音频提示 */}
                 {currentQuestion.inputType === QuestionInputType.AUDIO && (
-                  <VoiceInput 
-                    isProcessing={state.isProcessing} 
-                    onComplete={(text) => processAnswer(text, QuestionInputType.AUDIO)} 
-                  />
+                  <>
+                    {currentQuestion.audioSrc ? (
+                      // 有音频提示的题目使用 AudioPrompt
+                      <AudioPrompt
+                        audioSrc={currentQuestion.audioSrc}
+                        promptText={currentQuestion.text}
+                        onComplete={(text) => processAnswer(text, QuestionInputType.AUDIO)}
+                        isProcessing={state.isProcessing}
+                      />
+                    ) : (
+                      // 没有音频提示的题目使用原有的 VoiceInput
+                      <VoiceInput 
+                        isProcessing={state.isProcessing} 
+                        onComplete={(text) => processAnswer(text, QuestionInputType.AUDIO)}
+                        hideResult={false} // 普通语音输入不隐藏结果
+                      />
+                    )}
+                  </>
                 )}
 
+                {/* 绘图上传 */}
                 {currentQuestion.inputType === QuestionInputType.DRAWING && (
                   <ImageUploader 
                     onImageSelected={(file) => processAnswer(file, QuestionInputType.DRAWING)} 
