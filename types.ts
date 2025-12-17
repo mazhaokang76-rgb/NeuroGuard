@@ -29,6 +29,7 @@ export enum QuestionInputType {
   AUDIO = 'AUDIO',
   DRAWING = 'DRAWING',
   CHOICE = 'CHOICE'
+  SERIAL7 = 'serial7',
 }
 
 // ==================== 题目定义 ====================
