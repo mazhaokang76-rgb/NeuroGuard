@@ -141,7 +141,6 @@ Return ONLY: {"score": 0 or 1, "reasoning": "命名是否准确"}`
     assessmentType: AssessmentType.MOCA,
     category: '记忆',
     text: '词语记忆学习',
-    subText: '我会说5个词，请仔细听并重复：面孔、丝绒、寺庙、菊花、红色',
     audioSrc: '/voice/voicepiece.mp3', // 新增
     inputType: QuestionInputType.AUDIO,
     maxScore: 0,
@@ -153,7 +152,6 @@ Return ONLY: {"score": 0 or 1, "reasoning": "命名是否准确"}`
     id: 'moca_attention_forward',
     assessmentType: AssessmentType.MOCA,
     category: '注意力',
-    text: '请按顺序重复这些数字：2、1、5、4、3',
     audioSrc: '/voice/remember1.mp3', // 新增
     inputType: QuestionInputType.AUDIO,
     maxScore: 1,
@@ -165,7 +163,6 @@ Return ONLY: {"score": 0 or 1, "reasoning": "命名是否准确"}`
     id: 'moca_attention_backward',
     assessmentType: AssessmentType.MOCA,
     category: '注意力',
-    text: '请倒着重复这些数字：5、4、2',
     audioSrc: '/voice/remember2.mp3', // 新增
     inputType: QuestionInputType.AUDIO,
     maxScore: 1,
@@ -179,23 +176,42 @@ Return ONLY: {"score": 0 or 1, "reasoning": "命名是否准确"}`
     category: '注意力',
     text: '警觉性测试',
     subText: '我会读一串数字，每当你听到"1"时，请说"敲"或敲击桌子。数字序列: 5 2 1 3 9 4 1 1 8 0 6 2 1 5 1 9 4 5 1 1 1 4 1 9 0 5 1 1 2',
-    audioSrc: '/voice/knock.mp3', // 新增
+    audioSrc: '/voice/qiao.mp3', // 新增
     inputType: QuestionInputType.AUDIO,
     grokPrompt: 'Transcribe audio. Count how many times user says "敲" or "knock" or "tap" or describes tapping. Sequence has 10 occurrences of digit "1". Scoring: ≥8 correct responses (±2 errors allowed) = 1 point, <8 = 0 points. Return ONLY: {"score": 0 or 1, "reasoning": "说了X次敲，目标10次"}'
   },
 
-  // 注意力 - 连续减7 (3分)
-  {
-    id: 'moca_attention_serial7',
-    assessmentType: AssessmentType.MOCA,
-    category: '注意力',
-    text: '连续减7',
-    subText: '从100开始，每次减7，连续说出5个答案',
-    inputType: QuestionInputType.AUDIO,
-    maxScore: 3,
-    answerKey: '93, 86, 79, 72, 65',
-    grokPrompt: 'Transcribe audio. Extract 5 numbers. Correct sequence: 93, 86, 79, 72, 65. Count how many match. SCORING: 4-5 correct = 3 points, 2-3 correct = 2 points, 1 correct = 1 point, 0 correct = 0 points. If first answer wrong but subsequent subtractions correct (serial subtraction), count those as correct. Return ONLY: {"score": <0-3>, "reasoning": "说了[...], 正确X个"}'
-  },
+ // 注意力 - 连续减7 (3分)
+{
+  id: 'moca_attention_serial7',
+  assessmentType: AssessmentType.MOCA,
+  category: '注意力',
+  text: '连续减7',
+  subText: '从100开始，每次减7，连续填写5个答案',
+  inputType: QuestionInputType.SERIAL7, // 改为 SERIAL7
+  maxScore: 3,
+  answerKey: '93, 86, 79, 72, 65',
+  grokPrompt: `Analyze the 5 numbers provided as a comma-separated string.
+
+Expected correct sequence: 93, 86, 79, 72, 65
+
+SCORING RULES:
+1. Count exact matches with correct answers
+2. If first answer is wrong but subsequent differences are consistently -7 (serial subtraction logic), count those as correct
+3. Final score:
+   - 4-5 correct = 3 points
+   - 2-3 correct = 2 points  
+   - 1 correct = 1 point
+   - 0 correct = 0 points
+
+Examples:
+- Input: "93, 86, 79, 72, 65" → All correct → 5 matches → 3 points
+- Input: "90, 83, 76, 69, 62" → First wrong, but all -7 → 4 serial correct → 3 points
+- Input: "93, 86, 80, 73, 66" → 2 correct (93, 86) → 2 points
+- Input: "95, 88, 81, 74, 67" → All wrong but serial -7 → 5 serial correct → 3 points
+
+Return ONLY: {"score": <0-3>, "reasoning": "输入: [原始输入], 正确X个, 连续减7逻辑正确X个"}`
+}
 
   // 语言 - 复述句子 (2分)
   {
