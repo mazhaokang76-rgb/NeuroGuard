@@ -5,6 +5,7 @@ import { VoiceInput } from './VoiceInput';
 import { AudioPrompt } from './AudioPrompt';
 import { ImageUploader } from './ImageUploader';
 import { MOCAReport } from './MOCAReport';
+import { Serial7Input } from './Serial7Input';
 import { MOCA_QUESTIONS } from '../constants/mocaQuestions';
 import { PatientInfo, AssessmentState, QuestionInputType } from '../types';
 import { evaluateResponse } from '../services/grokService';
@@ -190,6 +191,15 @@ return (
                     ))}
                   </div>
                 )}
+
+                 {/* 连续减7专用输入 - 新增 */}
+                {currentQuestion.inputType === QuestionInputType.SERIAL7 && (
+                  <Serial7Input
+                    onComplete={(answers) => processAnswer(answers, QuestionInputType.SERIAL7)}
+                    isProcessing={state.isProcessing}
+                  />
+                )}
+
 
                 {/* 语音输入 - 区分是否有音频提示 */}
                 {currentQuestion.inputType === QuestionInputType.AUDIO && (
