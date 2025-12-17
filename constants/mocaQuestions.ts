@@ -214,7 +214,7 @@ Return ONLY: {"score": <0-3>, "reasoning": "输入: [原始输入], 正确X个, 
 }
 
   // 语言 - 复述句子 (2分)
-  {
+  ]
     id: 'moca_repeat_1',
     assessmentType: AssessmentType.MOCA,
     category: '语言',
