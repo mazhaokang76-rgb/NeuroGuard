@@ -24,7 +24,7 @@ export const Serial7Input: React.FC<Serial7InputProps> = ({ onComplete, isProces
     newAnswers[index] = numericValue;
     setAnswers(newAnswers);
 
-    if (numericValue && index < 4) {
+    if (numericValue.length >= 2 && index < 4) {
       inputRefs.current[index + 1]?.focus();
     }
   };
@@ -63,9 +63,6 @@ export const Serial7Input: React.FC<Serial7InputProps> = ({ onComplete, isProces
             <h3 className="font-bold text-blue-900 mb-2">连续减7测试</h3>
             <p className="text-blue-800 text-sm leading-relaxed">
               从 <span className="font-bold text-lg">100</span> 开始，每次减去 <span className="font-bold text-lg">7</span>，依次填写5个答案
-            </p>
-            <p className="text-blue-600 text-xs mt-2">
-              例如：100 - 7 = 93，93 - 7 = 86...
             </p>
           </div>
         </div>
