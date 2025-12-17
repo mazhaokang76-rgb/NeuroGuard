@@ -211,7 +211,7 @@ Examples:
 - Input: "95, 88, 81, 74, 67" → All wrong but serial -7 → 5 serial correct → 3 points
 
 Return ONLY: {"score": <0-3>, "reasoning": "输入: [原始输入], 正确X个, 连续减7逻辑正确X个"}`
-}
+},
 
   // 语言 - 复述句子 (2分)
   {
