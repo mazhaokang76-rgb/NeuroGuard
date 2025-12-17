@@ -28,7 +28,7 @@ export enum QuestionInputType {
   TEXT = 'TEXT',
   AUDIO = 'AUDIO',
   DRAWING = 'DRAWING',
-  CHOICE = 'CHOICE'
+  CHOICE = 'CHOICE',
   SERIAL7 = 'serial7',
 }
 
