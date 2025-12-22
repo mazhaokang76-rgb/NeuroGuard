@@ -103,7 +103,7 @@ export const MMSE_QUESTIONS: Question[] = [
     inputType: QuestionInputType.TEXT,
     maxScore: 1,
     answerKey: '根据设备位置判断',
-    grokPrompt: `Check if answer is a reasonable Chinese province/state name. If user location is provided in context (format: 【用户位置信息】), verify if answer matches or is close to the actual province. Accept: exact match or reasonable variation (e.g., 江苏 vs 江苏省). If no location info, accept any valid province name. Return ONLY: {"score": 1, "reasoning": "省份合理"} or {"score": 0, "reasoning": "不合理或与实际位置不符"}`
+    grokPrompt: `Check if answer is a reasonable Chinese province/state name. If user location is provided in context (format: 【用户位置信息】), verify if answer matches or is close to the actual province. Accept: exact match or reasonable variation (e.g., 江苏 vs 江苏省) or reasonable Chinese province/state name.  Return ONLY: {"score": 1, "reasoning": "省份合理"} or {"score": 0, "reasoning": "不合理或与实际位置不符"}`
   },
   
   {
@@ -114,7 +114,7 @@ export const MMSE_QUESTIONS: Question[] = [
     inputType: QuestionInputType.TEXT,
     maxScore: 1,
     answerKey: '根据设备位置判断',
-    grokPrompt: `Check if answer is a reasonable city/district name. If user location is provided in context, verify if answer matches or is close to the actual city. Accept: exact match or reasonable variation (e.g., 南京 vs 南京市). If no location info, accept any valid city name. Return ONLY: {"score": 1, "reasoning": "城市合理"} or {"score": 0, "reasoning": "不合理或与实际位置不符"}`
+    grokPrompt: `Check if answer is a reasonable city/district name. If user location is provided in context, verify if answer matches or is close to the actual city. Accept: exact match or reasonable variation (e.g., 南京 vs 南京市) or reasonable city/district name. If no location info, accept any valid city name. Return ONLY: {"score": 1, "reasoning": "城市合理"} or {"score": 0, "reasoning": "不合理或与实际位置不符"}`
   },
   
   {
