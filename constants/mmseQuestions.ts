@@ -228,7 +228,7 @@ export const MMSE_QUESTIONS: Question[] = [
     inputType: QuestionInputType.AUDIO,
     maxScore: 3,
     answerKey: '皮球、国旗、树木',
-    grokPrompt: 'Transcribe audio carefully. Count how many of these EXACT words are recalled: 皮球, 国旗, 树木. Each correct recall = 1 point. Must be spontaneous recall without prompting. Accept pronunciation variations but NOT synonyms. Return ONLY: {"score": <0-3>, "reasoning": "回忆出X个：[列出具体词]"}'
+   grokPrompt: 'Transcribe the audio carefully. Count how many of these words are mentioned: 皮球, 国旗, 树木 or 数目. Each correct word = 1 point. Accept slight pronunciation variations but NOT synonyms (e.g., 球 ≠ 皮球, 旗 ≠ 国旗). Return ONLY: {"score": <0-3>, "reasoning": "说出了X个：[列出具体说的词]"}'
   },
 
   // 语言能力 - 命名 (2分)
@@ -265,7 +265,8 @@ export const MMSE_QUESTIONS: Question[] = [
     inputType: QuestionInputType.AUDIO,
     maxScore: 1,
     answerKey: '四十四只石狮子',
-    grokPrompt: 'Transcribe audio carefully. Check if EXACTLY repeats: 四十四只石狮子. Accept slight tone variations but NOT: 四十四个, 石头狮子, accept same pronunciation: 44只，柿子，etc. Return ONLY: {"score": 1, "reasoning": "准确复述"} or {"score": 0, "reasoning": "不准确，说的是..."}''  },
+    grokPrompt: 'Transcribe audio carefully. Check if EXACTLY repeats: 四十四只石狮子. Accept slight tone variations but NOT: 四十四个, 石头狮子, accept same pronunciation: 44只，柿子，etc. Return ONLY: {"score": 1, "reasoning": "准确复述"} or {"score": 0, "reasoning": "不准确，说的是..."}'
+  },
 
   // 语言能力 - 阅读 (1分)
   {
