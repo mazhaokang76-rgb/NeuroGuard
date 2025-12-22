@@ -91,7 +91,7 @@ export const MMSE_QUESTIONS: Question[] = [
     inputType: QuestionInputType.TEXT,
     maxScore: 1,
     answerKey: getCurrentDateInfo().dayName,
-    grokPrompt: `Today is ${new Date().toLocaleDateString('en-US', {weekday: 'long'})} (${getCurrentDateInfo().dayName} / ${getCurrentDateInfo().dayNameShort}). Check if answer matches current day of week  or reasonable variation (e.g.,礼拜一， 周一，一，1 vs 星期一). Accept: ${getCurrentDateInfo().dayName}, ${getCurrentDateInfo().dayNameShort}, ${new Date().toLocaleDateString('en-US', {weekday: 'long'})}, 礼拜${getCurrentDateInfo().day === 0 ? '日' : getCurrentDateInfo().day}. Return ONLY: {"score": 1, "reasoning": "正确"} or {"score": 0, "reasoning": "错误，今天是${getCurrentDateInfo().dayName}"}`
+    grokPrompt: `Today is ${new Date().toLocaleDateString('en-US', {weekday: 'long'})} (${getCurrentDateInfo().dayName} / ${getCurrentDateInfo().dayNameShort}). Check if answer matches current day of week  or reasonable variation (e.g., 礼拜一， 周一，一，1 vs 星期一). Accept: ${getCurrentDateInfo().dayName}, ${getCurrentDateInfo().dayNameShort}, ${new Date().toLocaleDateString('en-US', {weekday: 'long'})}, 礼拜${getCurrentDateInfo().day === 0 ? '日' : getCurrentDateInfo().day}. Return ONLY: {"score": 1, "reasoning": "正确"} or {"score": 0, "reasoning": "错误，今天是${getCurrentDateInfo().dayName}"}`
   },
 
   // 定向力 - 地点 (5分) - 已优化为更宽松的评分标准
@@ -160,7 +160,8 @@ export const MMSE_QUESTIONS: Question[] = [
     inputType: QuestionInputType.AUDIO,
     maxScore: 3,
     answerKey: '皮球、国旗、树木',
-    grokPrompt: 'Transcribe the audio carefully. Count how many of these  words are mentioned: 皮球, 国旗, 树木 or 数目. Each correct word = 1 point. Accept slight pronunciation variations but NOT synonyms (e.g., 球 ≠ 皮球, 旗 ≠ 国旗). Return ONLY: {"score": <0-3>, "reasoning": "说出了X个：[列出具体说的词]"}''  },
+    grokPrompt: 'Transcribe the audio carefully. Count how many of these  words are mentioned: 皮球, 国旗, 树木 or 数目. Each correct word = 1 point. Accept slight pronunciation variations but NOT synonyms (e.g., 球 ≠ 皮球, 旗 ≠ 国旗). Return ONLY: {"score": <0-3>, "reasoning": "说出了X个：[列出具体说的词]"}'
+  },
 
   // 注意力和计算力 (5分)
   {
@@ -228,7 +229,7 @@ export const MMSE_QUESTIONS: Question[] = [
     inputType: QuestionInputType.AUDIO,
     maxScore: 3,
     answerKey: '皮球、国旗、树木',
-   grokPrompt: 'Transcribe the audio carefully. Count how many of these words are mentioned: 皮球, 国旗, 树木 or 数目. Each correct word = 1 point. Accept slight pronunciation variations but NOT synonyms (e.g., 球 ≠ 皮球, 旗 ≠ 国旗). Return ONLY: {"score": <0-3>, "reasoning": "说出了X个：[列出具体说的词]"}'
+    grokPrompt: 'Transcribe audio carefully. Count how many of these EXACT words are recalled: 皮球, 国旗, 树木. Each correct recall = 1 point. Must be spontaneous recall without prompting. Accept pronunciation variations but NOT synonyms. Return ONLY: {"score": <0-3>, "reasoning": "回忆出X个：[列出具体词]"}'
   },
 
   // 语言能力 - 命名 (2分)
