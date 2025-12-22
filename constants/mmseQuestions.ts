@@ -94,7 +94,7 @@ export const MMSE_QUESTIONS: Question[] = [
     grokPrompt: `Today is ${new Date().toLocaleDateString('en-US', {weekday: 'long'})} (${getCurrentDateInfo().dayName} / ${getCurrentDateInfo().dayNameShort}). Check if answer matches current day of week  or reasonable variation (e.g.,礼拜一， 周一，一，1 vs 星期一). Accept: ${getCurrentDateInfo().dayName}, ${getCurrentDateInfo().dayNameShort}, ${new Date().toLocaleDateString('en-US', {weekday: 'long'})}, 礼拜${getCurrentDateInfo().day === 0 ? '日' : getCurrentDateInfo().day}. Return ONLY: {"score": 1, "reasoning": "正确"} or {"score": 0, "reasoning": "错误，今天是${getCurrentDateInfo().dayName}"}`
   },
 
-  // 定向力 - 地点 (5分)
+  // 定向力 - 地点 (5分) - 已优化为更宽松的评分标准
   {
     id: 'mmse_place_province',
     assessmentType: AssessmentType.MMSE,
@@ -102,8 +102,8 @@ export const MMSE_QUESTIONS: Question[] = [
     text: '您住在哪个省？',
     inputType: QuestionInputType.TEXT,
     maxScore: 1,
-    answerKey: '根据设备位置判断',
-    grokPrompt: `Check if answer is a reasonable Chinese province/state name. If user location is provided in context (format: 【用户位置信息】), verify if answer matches or is close to the actual province. Accept: exact match or reasonable variation (e.g., 江苏 vs 江苏省) or reasonable Chinese province/state name.  Return ONLY: {"score": 1, "reasoning": "省份合理"} or {"score": 0, "reasoning": "不合理或与实际位置不符"}`
+    answerKey: '任何合理的中国省份名称',
+    grokPrompt: `Check if answer is ANY valid Chinese province/municipality name (北京/上海/江苏/浙江/广东/etc.). Accept: full name (江苏省), short form (江苏), or reasonable variations. Score 1 for ANY valid Chinese province. Only score 0 if answer is clearly nonsensical (gibberish, numbers, foreign countries). Return ONLY: {"score": 1, "reasoning": "省份名称合理"} or {"score": 0, "reasoning": "答案不合理"}`
   },
   
   {
@@ -113,8 +113,8 @@ export const MMSE_QUESTIONS: Question[] = [
     text: '您住在什么市（区县）？',
     inputType: QuestionInputType.TEXT,
     maxScore: 1,
-    answerKey: '根据设备位置判断',
-    grokPrompt: `Check if answer is a reasonable city/district name. If user location is provided in context, verify if answer matches or is close to the actual city. Accept: exact match or reasonable variation (e.g., 南京 vs 南京市) or reasonable city/district name. If no location info, accept any valid city name. Return ONLY: {"score": 1, "reasoning": "城市合理"} or {"score": 0, "reasoning": "不合理或与实际位置不符"}`
+    answerKey: '任何合理的城市名称',
+    grokPrompt: `Check if answer is ANY reasonable city/district name in China (北京/上海/南京/杭州/深圳/etc.). Accept: full name (南京市), short form (南京), district names (朝阳区), or any plausible city. Score 1 for ANY valid city name. Only score 0 if clearly nonsensical. Return ONLY: {"score": 1, "reasoning": "城市名称合理"} or {"score": 0, "reasoning": "答案不合理"}`
   },
   
   {
@@ -124,8 +124,8 @@ export const MMSE_QUESTIONS: Question[] = [
     text: '您住在什么街道？',
     inputType: QuestionInputType.TEXT,
     maxScore: 1,
-    answerKey: '根据设备位置判断',
-    grokPrompt: `Check if answer is a reasonable street/area/district name. If user location shows district info in context, consider if answer is consistent. Accept any reasonable street name or "不知道具体街道" as valid (score 1) since exact street is hard to recall. Return ONLY: {"score": 1, "reasoning": "街道名称合理"} or {"score": 0, "reasoning": "明显不合理"}`
+    answerKey: '任何合理的街道名称',
+    grokPrompt: `Check if answer is ANY reasonable street/road/area name (中山路/人民街/东方社区/etc.) OR "不知道"/"记不清". Score 1 for ANY plausible street name or honest "don't know" answer. The goal is to test if patient can provide a reasonable response, not accuracy. Only score 0 if clearly nonsensical or no response. Return ONLY: {"score": 1, "reasoning": "回答合理"} or {"score": 0, "reasoning": "答案不合理"}`
   },
   
   {
