@@ -313,7 +313,7 @@ export const MMSE_QUESTIONS: Question[] = [
     inputType: QuestionInputType.DRAWING,
     maxScore: 1,
     answerKey: '两个五边形相交形成四边形',
-    grokPrompt: 'Analyze the drawing image carefully. Scoring criteria: (1) Two distinct pentagons (五边形) - each must have 5 sides, (2) They must INTERSECT/OVERLAP (相交), (3) The intersection should form a quadrilateral (四边形). Minor drawing imperfections OK, but structure must be recognizable. Return ONLY: {"score": 1, "reasoning": "符合要求"} or {"score": 0, "reasoning": "不符合，因为..."}'
+    grokPrompt: 'Analyze the drawing image carefully. Scoring criteria: (1) Two distinct pentagons (五边形) - each must have 5 sides, (2) They must INTERSECT/OVERLAP (相交). Minor drawing imperfections OK, but structure must be recognizable. Return ONLY: {"score": 1, "reasoning": "符合要求"} or {"score": 0, "reasoning": "不符合，因为..."}'
   }
 ];
 
